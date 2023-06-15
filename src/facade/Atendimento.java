@@ -4,6 +4,7 @@ import java.util.List;
 import repositorio.RepositorioDeComandas;
 import repositorio.RepositorioDeProdutos;
 import servico.Mesa;
+import servico.produto.*;
 
 import java.util.ArrayList;
 
@@ -34,6 +35,9 @@ public class Atendimento {
 		return true;
 	}
 
+	public List<Produto> getAllProdutos(){
+		return cardapio.getAllProdutos();
+	}
 	
 	public RepositorioDeComandas getComandas() {
 		return comandas;

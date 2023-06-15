@@ -1,8 +1,11 @@
 package app;
 
+import java.util.List;
+//import java.util.ArrayList;
 import java.util.Scanner;
 
 import facade.Atendimento;
+import servico.produto.Produto;
 
 public class App {
 	static Atendimento facade = new Atendimento();
@@ -15,8 +18,9 @@ public class App {
 			System.out.println("MENU PRINCIPAL");
 			System.out.println("==== =========");
 			System.out.println();
-			System.out.println("<1> Abrir menu comandas");
-			System.out.println("<2> Exibir cardápio");
+			System.out.println("<1> Exibir cardápio");
+			System.out.println("<2> Abrir menu de comandas");
+			System.out.println("<3> Abrir menu de produtos");
 			System.out.println("<0> Sair");
 			System.out.println();
 			System.out.print("Escolha uma opção: ");
@@ -25,12 +29,51 @@ public class App {
 			} catch (Exception e) {
 				opcao = 0;
 			}
+			
+			switch (opcao) {
+			case 0:
+				limpaTela();
+				break;
+			case 1:
+				exibeCardapio();
+				break;
+			case 2:
+				menuComandas();
+				break;
+			case 3:
+				menuProdutos();
+				break;
+			}
+			
 		} while(opcao!=0);
+		
 	}
 	private static void limpaTela() {
 		for (int i = 0; i < 25; i++) {
 			System.out.println();
 		}
 	}
+	
+	public static void exibeCardapio() {
+		List<Produto> cardapioTemporario = facade.getAllProdutos();
+		int n = cardapioTemporario.size();
+		limpaTela();
+		for(int i=0; i<n; i++) {
+			System.out.printf("%s\n", cardapioTemporario.get(i));
+		}
+		
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+		limpaTela();
+		
+	}
+	public static void menuComandas() {
+		
+	}
+	
+	public static void menuProdutos() {
+		
+	}
+	
 
 }

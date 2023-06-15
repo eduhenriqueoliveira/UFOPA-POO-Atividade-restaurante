@@ -4,6 +4,11 @@ public class Produto {
 	private String nome;
 	private double preco;
 	private int quantidadeDisponivel;
+	
+	public String toString() {
+		return String.format("%s, R$ %lf", nome, preco);
+	}
+	
 	public String getNome() {
 		return nome;
 	}
