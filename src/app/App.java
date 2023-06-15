@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import facade.Atendimento;
+import repositorio.produto.CardapioVazioException;
 import servico.produto.Produto;
 
 public class App {
@@ -55,11 +56,15 @@ public class App {
 	}
 	
 	public static void exibeCardapio() {
-		List<Produto> cardapioTemporario = facade.getAllProdutos();
-		int n = cardapioTemporario.size();
 		limpaTela();
-		for(int i=0; i<n; i++) {
-			System.out.printf("%s\n", cardapioTemporario.get(i));
+		try {
+			List<Produto> cardapioTemporario = facade.getAllProdutos();
+			int n = cardapioTemporario.size();			
+			for(int i=0; i<n; i++) {
+				System.out.printf("%s\n", cardapioTemporario.get(i));
+			}
+		}catch (CardapioVazioException ex) {
+			System.err.println(ex.getMessage());
 		}
 		
 		System.out.println("tecle <enter> para voltar");
