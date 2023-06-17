@@ -1,20 +1,22 @@
 package facade;
 import java.util.List;
 
-import repositorio.RepositorioDeComandas;
-import repositorio.RepositorioDeProdutos;
+import repositorio.comanda.RepositorioDeComandasLista;
+import repositorio.produto.CardapioVazioException;
+import repositorio.produto.RepositorioDeProdutosLista;
 import servico.Mesa;
+import servico.produto.*;
 
 import java.util.ArrayList;
 
 public class Atendimento {
-	private RepositorioDeComandas comandas;
-	private RepositorioDeProdutos cardapio;
+	private RepositorioDeComandasLista comandas;
+	private RepositorioDeProdutosLista cardapio;
 	private List<Mesa> mesas;
 	
 	public Atendimento() {
-		this.comandas = new RepositorioDeComandas();
-		this.cardapio = new RepositorioDeProdutos();
+		this.comandas = new RepositorioDeComandasLista();
+		this.cardapio = new RepositorioDeProdutosLista();
 		this.mesas = new ArrayList<Mesa>();
 	}
 	
@@ -34,20 +36,23 @@ public class Atendimento {
 		return true;
 	}
 
+	public List<Produto> getAllProdutos() throws CardapioVazioException{
+		return	cardapio.getAllProdutos();		
+	}
 	
-	public RepositorioDeComandas getComandas() {
+	public RepositorioDeComandasLista getComandas() {
 		return comandas;
 	}
 
-	public void setComandas(RepositorioDeComandas comandas) {
+	public void setComandas(RepositorioDeComandasLista comandas) {
 		this.comandas = comandas;
 	}
 
-	public RepositorioDeProdutos getCardapio() {
+	public RepositorioDeProdutosLista getCardapio() {
 		return cardapio;
 	}
 
-	public void setCardapio(RepositorioDeProdutos cardapio) {
+	public void setCardapio(RepositorioDeProdutosLista cardapio) {
 		this.cardapio = cardapio;
 	}
 
