@@ -73,9 +73,51 @@ public class App {
 		
 	}
 	public static void menuComandas() {
+		int opcao = 0;
+		limpaTela();
+		do {
+			System.out.println("MENU COMANDAS");
+			System.out.println("==== ========");
+			System.out.println();
+			System.out.println("<1> Listar Comandas");
+			System.out.println("<2> Fazer Comanda");
+			System.out.println("<3> Fechar Comanda");
+			System.out.println("<0> Sair");
+			System.out.println();
+			System.out.print("Escolha uma opção: ");
+			try {
+				opcao = Integer.valueOf(scanner.nextLine());
+			} catch (Exception e) {
+				opcao = 0;
+			}
+			
+			switch (opcao) {
+			case 0:
+				limpaTela();
+				break;
+			case 1:
+				listarComandas();
+				break;
+			case 2:
+				fazerComanda();
+				break;
+			case 3:
+				fecharComanda();
+				break;
+			}
+		}while(opcao!=0);
+	}
+
+	public static void listarComandas(){
 		
 	}
-	
+	public static void fazerComanda() {
+		
+	}
+	public static void fecharComanda() {
+		
+	}
+
 	public static void menuProdutos() {
 		
 	}
