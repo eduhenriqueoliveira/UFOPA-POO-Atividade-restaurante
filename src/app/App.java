@@ -119,6 +119,44 @@ public class App {
 	}
 
 	public static void menuProdutos() {
+		int opcao = 0;
+		limpaTela();
+		do {
+			System.out.println("MENU PRODUTOS");
+			System.out.println("==== ========");
+			System.out.println();
+			System.out.println("<1> Mostrar cardápio");
+			System.out.println("<2> Cadastrar um produto no sistema");
+			System.out.println("<3> Remover um produto do sistema");
+			System.out.println("<0> Sair");
+			System.out.println();
+			System.out.print("Escolha uma opção: ");
+			try {
+				opcao = Integer.valueOf(scanner.nextLine());
+			} catch (Exception e) {
+				opcao = 0;
+			}
+			
+			switch (opcao) {
+			case 0:
+				limpaTela();
+				break;
+			case 1:
+				exibeCardapio();
+				break;
+			case 2:
+				cadastrarProduto();
+				break;
+			case 3:
+				removerProduto();
+				break;
+			}
+		}while(opcao!=0);
+	}
+	public static void cadastrarProduto() {
+		
+	}
+	public static void removerProduto() {
 		
 	}
 	
