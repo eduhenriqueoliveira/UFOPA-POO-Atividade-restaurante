@@ -1,17 +1,21 @@
 package facade;
 import java.util.List;
 
+import repositorio.comanda.RepositorioDeComandas;
 import repositorio.comanda.RepositorioDeComandasLista;
 import repositorio.produto.CardapioVazioException;
+import repositorio.produto.RepositorioDeProdutos;
 import repositorio.produto.RepositorioDeProdutosLista;
+import repositorio.produto.SemIndustrializadoException;
+import repositorio.produto.SemPratosException;
 import servico.Mesa;
 import servico.produto.*;
 
 import java.util.ArrayList;
 
 public class Atendimento {
-	private RepositorioDeComandasLista comandas;
-	private RepositorioDeProdutosLista cardapio;
+	private RepositorioDeComandas comandas;
+	private RepositorioDeProdutos cardapio;
 	private List<Mesa> mesas;
 	
 	public Atendimento() {
@@ -28,39 +32,30 @@ public class Atendimento {
 		return true;
 	}
 	
-	public boolean abrirCardapio(){
-		return true;
-	}
-	
 	public boolean checarDisponibilidadeDeMesa(Mesa mesa) {
 		return true;
 	}
 
-	public List<Produto> getAllProdutos() throws CardapioVazioException{
-		return	cardapio.getAllProdutos();		
+	public void cadastrarProduto(Prato novo){
+		cardapio.addNewProduto(novo);
+	}
+	public void cadastrarProduto(Industrializado novo){
+		cardapio.addNewProduto(novo);
 	}
 	
-	public RepositorioDeComandasLista getComandas() {
-		return comandas;
+	public List<Produto> getAllProdutos() throws CardapioVazioException{
+		return cardapio.getAllProdutos();		
 	}
 
-	public void setComandas(RepositorioDeComandasLista comandas) {
-		this.comandas = comandas;
+	public List<Produto> getSomentePratos() throws SemPratosException{
+		return cardapio.getSomentePratos();
 	}
-
-	public RepositorioDeProdutosLista getCardapio() {
-		return cardapio;
+	public List<Produto> getSomenteIndustrializados() throws SemIndustrializadoException{
+		return cardapio.getSomenteIndustrializados();		
 	}
-
-	public void setCardapio(RepositorioDeProdutosLista cardapio) {
-		this.cardapio = cardapio;
-	}
-
+	
 	public List<Mesa> getMesas() {
 		return mesas;
 	}
 
-	public void setMesas(List<Mesa> mesas) {
-		this.mesas = mesas;
-	}
 }
