@@ -9,7 +9,9 @@ import facade.Atendimento;
 import repositorio.produto.CardapioVazioException;
 import repositorio.produto.SemIndustrializadoException;
 import repositorio.produto.SemPratosException;
+
 import servico.Comanda;
+
 import servico.produto.Industrializado;
 import servico.produto.Prato;
 import servico.produto.Produto;
@@ -152,7 +154,7 @@ public class App {
 		
 		//Impressao de todas as comandas
 		for(Comanda comanda : comandas) {
-			System.out.printf("%d\t%d\t",comanda.getCodigoDeComanda(), comanda.getMesa().getCodigoDaMesa());
+			System.out.printf("%d\t%d\t",comanda.getCodigoDeComanda(), comanda.getMesa().getCodigoDeMesa());
 			
 			if(comanda.isStatus()) {
 				System.out.printf("Aberto\t%.2f\t%s", comanda.getTotalAPagar(), 
