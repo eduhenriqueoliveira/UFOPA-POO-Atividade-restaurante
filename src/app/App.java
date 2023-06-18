@@ -6,6 +6,10 @@ import java.util.Scanner;
 
 import facade.Atendimento;
 import repositorio.produto.CardapioVazioException;
+import repositorio.produto.SemIndustrializadoException;
+import repositorio.produto.SemPratosException;
+import servico.produto.Industrializado;
+import servico.produto.Prato;
 import servico.produto.Produto;
 
 public class App {
@@ -57,16 +61,41 @@ public class App {
 	
 	public static void exibeCardapio() {
 		limpaTela();
-		try {
+		try {			
 			List<Produto> cardapioTemporario = facade.getAllProdutos();
-			int n = cardapioTemporario.size();			
-			for(int i=0; i<n; i++) {
-				System.out.printf("%s\n", cardapioTemporario.get(i));
+			
+			System.out.println("Pratos");
+			try {
+				List<Produto> pratoTemporario = facade.getSomentePratos();
+				System.out.println("*******************************");
+				System.out.println("Cod Nome                    Disponivel Preço");
+				System.out.println("=== ======================= ========== =======");
+				for(int i=0; i<pratoTemporario.size(); i++) {
+					System.out.printf("%s", pratoTemporario.get(i));
+				}
+				System.out.println("*******************************");
+			}catch(SemPratosException ex) {
+				System.err.println(ex.getMessage());
 			}
+			System.out.println("");
+			System.out.println("Industrializados");
+			try {
+				List<Produto> indutrialTemporario = facade.getSomenteIndustrializados();
+				System.out.println("*******************************");
+				System.out.println("Cod Nome                    Disponivel Preço");
+				System.out.println("=== ======================= ========== =======");
+				for(int i=0; i<indutrialTemporario.size(); i++) {
+					System.out.printf("%s", indutrialTemporario.get(i));
+				}
+				System.out.println("*******************************");
+			}catch(SemIndustrializadoException ex) {
+				System.err.println(ex.getMessage());
+			}
+			
+			
 		}catch (CardapioVazioException ex) {
 			System.err.println(ex.getMessage());
 		}
-		
 		System.out.println("tecle <enter> para voltar");
 		scanner.nextLine();
 		limpaTela();
@@ -128,6 +157,7 @@ public class App {
 			System.out.println("<1> Mostrar cardápio");
 			System.out.println("<2> Cadastrar um produto no sistema");
 			System.out.println("<3> Remover um produto do sistema");
+			System.out.println("<4> Modificar disponibilidade de um produto");
 			System.out.println("<0> Sair");
 			System.out.println();
 			System.out.print("Escolha uma opção: ");
@@ -155,6 +185,45 @@ public class App {
 	}
 	public static void cadastrarProduto() {
 		
+		limpaTela();
+		System.out.println("Cadastro de produto");
+		System.out.println("===================");
+		
+		System.out.println("Digite o tipo de produto: ");
+		System.out.println("<1> Prato <2> Industrializado");
+		int opcao = scanner.nextInt();
+		if(opcao>2 || 1>opcao) {
+			System.err.println("Tipo de produto invalido");
+		}else {
+			System.out.println("Nome do produto: ");
+			scanner.nextLine();
+			String nomeDoProduto = scanner.nextLine();
+			
+			System.out.println("Preço que ele custará");
+			double preco = scanner.nextDouble();
+			System.out.println("Quanto custa compra-lo ou faze-lo?");
+			
+			double custo = scanner.nextDouble();
+			int codigoDoProduto;
+			try {
+				codigoDoProduto = facade.getAllProdutos().size() + 1;
+			}catch(CardapioVazioException ex) {
+				codigoDoProduto = 1;
+			}
+			switch(opcao) {
+				case 1:
+					facade.cadastrarProduto(new Prato(nomeDoProduto, preco, codigoDoProduto, custo));
+					break;
+				case 2: 
+					facade.cadastrarProduto(new Industrializado(nomeDoProduto, preco, codigoDoProduto, custo));
+					break;
+			}
+		}
+		System.out.println();
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+		scanner.nextLine();
+
 	}
 	public static void removerProduto() {
 		
