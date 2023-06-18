@@ -125,7 +125,7 @@ public class App {
 			System.out.println("MENU PRODUTOS");
 			System.out.println("==== ========");
 			System.out.println();
-			System.out.println("<1> Consultar Disponibilidade de um produto");
+			System.out.println("<1> Mostrar cardápio");
 			System.out.println("<2> Cadastrar um produto no sistema");
 			System.out.println("<3> Remover um produto do sistema");
 			System.out.println("<0> Sair");
@@ -142,16 +142,22 @@ public class App {
 				limpaTela();
 				break;
 			case 1:
-				listarComandas();
+				exibeCardapio();
 				break;
 			case 2:
-				fazerComanda();
+				cadastrarProduto();
 				break;
 			case 3:
-				fecharComanda();
+				removerProduto();
 				break;
 			}
 		}while(opcao!=0);
+	}
+	public static void cadastrarProduto() {
+		
+	}
+	public static void removerProduto() {
+		
 	}
 	
 
