@@ -55,11 +55,11 @@ public class Comanda {
 		this.status = status;
 	}
 
-	public double getTotalAPgar() {
+	public double getTotalAPagar() {
 		return totalAPgar;
 	}
 
-	public void setTotalAPgar(double totalAPgar) {
+	public void setTotalAPagar(double totalAPgar) {
 		this.totalAPgar = totalAPgar;
 	}
 

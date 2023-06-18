@@ -9,4 +9,6 @@ public interface RepositorioDeComandas {
 	public boolean addComanda(Comanda novaComanda);
 	public List<Comanda> getListaDeComandas();
 	public void setListaDeComandas(List<Comanda> listaDeComandas);
+	
+	
 }

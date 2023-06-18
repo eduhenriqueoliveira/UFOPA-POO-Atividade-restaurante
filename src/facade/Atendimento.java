@@ -8,6 +8,7 @@ import repositorio.produto.RepositorioDeProdutos;
 import repositorio.produto.RepositorioDeProdutosLista;
 import repositorio.produto.SemIndustrializadoException;
 import repositorio.produto.SemPratosException;
+import servico.Comanda;
 import servico.Mesa;
 import servico.produto.*;
 
@@ -56,6 +57,12 @@ public class Atendimento {
 	
 	public List<Mesa> getMesas() {
 		return mesas;
+	}
+	
+	public List<Comanda> getAllComandas(){
+		
+		return comandas.getListaDeComandas();
+		
 	}
 
 }
