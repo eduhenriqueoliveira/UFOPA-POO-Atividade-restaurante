@@ -5,6 +5,7 @@ import java.util.List;
 import servico.produto.Industrializado;
 import servico.produto.Prato;
 import servico.produto.Produto;
+import repositorio.produto.*;
 
 public interface RepositorioDeProdutos{
 

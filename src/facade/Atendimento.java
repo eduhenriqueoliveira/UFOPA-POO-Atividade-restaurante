@@ -1,4 +1,5 @@
 package facade;
+import java.util.ArrayList;
 import java.util.List;
 
 import repositorio.comanda.RepositorioDeComandas;
@@ -8,10 +9,11 @@ import repositorio.produto.RepositorioDeProdutos;
 import repositorio.produto.RepositorioDeProdutosLista;
 import repositorio.produto.SemIndustrializadoException;
 import repositorio.produto.SemPratosException;
+import servico.Comanda;
 import servico.Mesa;
-import servico.produto.*;
-
-import java.util.ArrayList;
+import servico.produto.Industrializado;
+import servico.produto.Prato;
+import servico.produto.Produto;
 
 public class Atendimento {
 	private RepositorioDeComandas comandas;
@@ -56,6 +58,10 @@ public class Atendimento {
 	
 	public List<Mesa> getMesas() {
 		return mesas;
+	}
+	public List<Comanda> getAllComandas(){
+		return comandas.getListaDeComandas();
+		
 	}
 
 }

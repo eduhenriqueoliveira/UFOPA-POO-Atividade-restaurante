@@ -1,5 +1,6 @@
 package app;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 //import java.util.ArrayList;
 import java.util.Scanner;
@@ -8,6 +9,7 @@ import facade.Atendimento;
 import repositorio.produto.CardapioVazioException;
 import repositorio.produto.SemIndustrializadoException;
 import repositorio.produto.SemPratosException;
+import servico.Comanda;
 import servico.produto.Industrializado;
 import servico.produto.Prato;
 import servico.produto.Produto;
@@ -139,6 +141,37 @@ public class App {
 
 	public static void listarComandas(){
 		
+
+		limpaTela();
+		
+		List<Comanda> comandas = facade.getAllComandas();
+		
+		//Cabeçalho da tabela
+		System.out.printf("Codigo\tMesa\tStatus\tValor\tInicio\tFim\t\n");
+		System.out.printf("======\t====\t======\t=====\t======\t===\t\n");
+		
+		//Impressao de todas as comandas
+		for(Comanda comanda : comandas) {
+			System.out.printf("%d\t%d\t",comanda.getCodigoDeComanda(), comanda.getMesa().getCodigoDaMesa());
+			
+			if(comanda.isStatus()) {
+				System.out.printf("Aberto\t%.2f\t%s", comanda.getTotalAPagar(), 
+						comanda.getDataDeAbertura().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")).toString());
+			}else {
+				System.out.printf("Fechado\t%.2f\t%s", comanda.getTotalAPagar(), 
+						comanda.getDataDeAbertura().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")).toString(), 
+						comanda.getDataDeFechamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")).toString());
+			}
+						
+			System.out.println(); //Imprime uma nova linha ao fim de cada comanda
+		}
+		
+		//Padrão após a lista
+		System.out.println();
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+		
+
 	}
 	public static void fazerComanda() {
 		
