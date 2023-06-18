@@ -1,12 +1,30 @@
 package servico.produto;
 
 public class Produto {
+	private int codigoDeProduto;
 	private String nome;
 	private double preco;
 	private int quantidadeDisponivel;
 	
+	public Produto(String nomeI, double precoI, int codigo) {
+		this.nome = nomeI;
+		this.preco = precoI;
+		this.codigoDeProduto = codigo;
+	}
+	
+	@Override
 	public String toString() {
-		return String.format("%s, R$ %lf", nome, preco);
+		String disponivel;
+		disponivel = (quantidadeDisponivel>0)? "Sim":"Não";
+		return String.format("%-24s%-10sR$ %.2f\n", this.nome, disponivel, this.preco);
+	}
+
+	public int getCodigoDeProduto() {
+		return codigoDeProduto;
+	}
+	
+	public void setCodigoDeProduto(int codigoDeProduto) {
+		this.codigoDeProduto = codigoDeProduto;
 	}
 	
 	public String getNome() {
