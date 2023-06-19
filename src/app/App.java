@@ -177,10 +177,12 @@ public class App {
 		System.out.println();
 		System.out.println("tecle <enter> para voltar");
 		scanner.nextLine();
+		limpaTela();
 		
 
 	}
 	public static void fazerComanda() {
+		limpaTela();
 		System.out.println("Digite o código da mesa: ");
 		int codigo = scanner.nextInt();
 		Mesa mesa;
@@ -210,10 +212,29 @@ public class App {
 		} catch(CardapioVazioException ex3) {
 			System.err.println(ex3.getMessage());
 		}
-		
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+		scanner.nextLine();
+		limpaTela();
 	}
 	public static void fecharComanda() {
-		
+		limpaTela();
+		System.out.println("Digite o código da comanda: ");
+		int codigo = scanner.nextInt();
+		Comanda comandaParaFechar; 
+		try {
+			comandaParaFechar = facade.getComanda(codigo);
+			System.out.println("Valor a pagar: " + comandaParaFechar.totalAPagar());
+			System.out.println("Valor que está pagando: ");
+			double valorPago = scanner.nextDouble();
+			facade.fecharComanda(comandaParaFechar, valorPago);
+		} catch (CodigoInvalidoException e) {
+			System.err.println(e.getMessage());
+		}
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+		scanner.nextLine();
+		limpaTela();
 	}
 
 	public static void menuProdutos() {
@@ -296,12 +317,13 @@ public class App {
 		System.out.println("tecle <enter> para voltar");
 		scanner.nextLine();
 		scanner.nextLine();
+		limpaTela();
 
 	}
 	public static void removerProduto() {
 		limpaTela();
 		try {
-			List<Produto> cardapioTemporario = facade.getAllProdutos();
+			facade.getAllProdutos();
 			System.out.println("Digite o código do produto a ser removido");
 			int codigo = scanner.nextInt();
 			try {				
@@ -316,6 +338,7 @@ public class App {
 		
 		System.out.println("tecle <enter> para voltar");
 		scanner.nextLine();
+		limpaTela();
 	}
 	public static void alterarDisponibilidade() {
 		limpaTela();
@@ -337,6 +360,7 @@ public class App {
 		System.out.println("tecle <enter> para voltar");
 		scanner.nextLine();
 		scanner.nextLine();
+		limpaTela();
 		
 	}
 	public static void menuMesas() {

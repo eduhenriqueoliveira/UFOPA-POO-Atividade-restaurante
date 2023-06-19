@@ -44,8 +44,8 @@ public class Atendimento {
 		return true;
 	}
 	
-	public boolean fecharComanda(Mesa naMesa, double pagamento) {
-		return true;
+	public boolean fecharComanda(Comanda comandaParaFechar, double pagamento) {
+		return comandas.closeComanda(comandaParaFechar, pagamento);
 	}
 	
 	public boolean checarDisponibilidadeDeMesa(Mesa mesa) throws MesaIndisponivelException{
@@ -67,6 +67,10 @@ public class Atendimento {
 
 	public Produto getProduto(int codigo) throws CodigoInvalidoException{
 		return cardapio.getProduto(codigo);
+	}
+	
+	public Comanda getComanda(int codigo) throws CodigoInvalidoException{
+		return comandas.getComanda(codigo);
 	}
 	
 	public void cadastrarProduto(Prato novo){
