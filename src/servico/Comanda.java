@@ -3,16 +3,56 @@ import java.util.List;
 
 import servico.produto.Produto;
 
-import java.util.ArrayList;
 import java.time.LocalDateTime;
+
 public class Comanda {
 	private Mesa mesa;
 	private List<Produto> pedidos;
 	private int codigoDeComanda;
 	private boolean status;
 	private double totalAPgar;
+	private double valorPago;
 	private LocalDateTime dataDeAbertura;
 	private LocalDateTime dataDeFechamento;
+	
+	public Comanda(Mesa mesa, int codigo, List<Produto> pedidosI) {
+		this.mesa = mesa;
+		this.pedidos = pedidosI;
+		this.codigoDeComanda = codigo;
+		this.status = true;
+		this.totalAPgar = somatorioDosProdutos(pedidosI);
+		this.valorPago = 0;
+		this.dataDeAbertura = LocalDateTime.now();
+	}
+	
+	public void fecharComanda(double valorPago) {
+		this.status = false;
+		this.valorPago = valorPago;
+		this.dataDeFechamento = LocalDateTime.now();
+	}
+	
+	public double somatorioDosProdutos(List<Produto> pedidos) {
+		double retorno = 0;
+		for (int i=0; i<pedidos.size(); i++) {
+			retorno += pedidos.get(i).getPreco();
+		}
+		return retorno;
+	}
+	
+	public void addPedidoNaComanda(Produto produto) {
+		this.pedidos.add(produto);
+		this.totalAPgar += produto.getPreco();
+	}
+	
+	
+	public void addPedidoNaComanda(List<Produto> produtos) {
+		int tamanho = produtos.size();
+		for(int i=0; i<tamanho; i++) {
+			this.pedidos.add(produtos.get(i));
+		}
+		this.totalAPgar += somatorioDosProdutos(produtos);
+	}
+	
 	
 	public boolean addPedido(Produto pedido) {
 		return true;
