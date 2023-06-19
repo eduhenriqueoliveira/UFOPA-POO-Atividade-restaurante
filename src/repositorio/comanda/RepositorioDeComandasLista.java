@@ -16,6 +16,7 @@ public class RepositorioDeComandasLista implements RepositorioDeComandas{
 	
 	@Override
 	public boolean addComanda(Comanda novaComanda) {
+		listaDeComandas.add(novaComanda);
 		return true;
 	}
 

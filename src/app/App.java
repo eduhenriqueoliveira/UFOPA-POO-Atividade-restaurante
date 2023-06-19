@@ -70,7 +70,7 @@ public class App {
 	public static void exibeCardapio() {
 		limpaTela();
 		try {			
-			List<Produto> cardapioTemporario = facade.getAllProdutos();
+			facade.getAllProdutos();
 			
 			System.out.println("Pratos");
 			try {
@@ -193,15 +193,25 @@ public class App {
 			List<Produto> pedidosFeitos = new ArrayList<Produto>();
 			Produto produtoPedido;
 			int opcao = 1;
+			int quantidadeDoPedido;
 			do {
-				try {
-					System.out.println("Digite o código do produto, digite 0 para sair: ");
-					opcao = scanner.nextInt();
-					produtoPedido = facade.getProduto(codigo);
-					pedidosFeitos.add(produtoPedido);
-				} catch(CodigoInvalidoException ex) {
-					System.err.println(ex.getMessage());
-					System.err.println("Tente novamente se desejado.");
+				System.out.println("Digite o código do produto, digite 0 para sair: ");
+				opcao = scanner.nextInt();
+				if(opcao != 0) {
+					try {
+						produtoPedido = facade.getProduto(codigo);
+						quantidadeDoPedido = produtoPedido.getQuantidadeDisponivel();
+						if(quantidadeDoPedido>0) {
+							pedidosFeitos.add(produtoPedido);
+							produtoPedido.setQuantidadeDisponivel(quantidadeDoPedido-1);
+							System.out.println("Produto adicionado.");
+						} else {
+							System.err.println("Produto indisponivel");
+						}
+					} catch(CodigoInvalidoException ex) {
+						System.err.println(ex.getMessage());
+						System.err.println("Tente novamente se desejado.");
+					}
 				}
 			}while (opcao != 0);
 			facade.abrirComanda(mesa, pedidosFeitos);
@@ -224,7 +234,7 @@ public class App {
 		Comanda comandaParaFechar; 
 		try {
 			comandaParaFechar = facade.getComanda(codigo);
-			System.out.println("Valor a pagar: " + comandaParaFechar.totalAPagar());
+			System.out.println("Valor a pagar: " + comandaParaFechar.getTotalAPagar());
 			System.out.println("Valor que está pagando: ");
 			double valorPago = scanner.nextDouble();
 			facade.fecharComanda(comandaParaFechar, valorPago);
