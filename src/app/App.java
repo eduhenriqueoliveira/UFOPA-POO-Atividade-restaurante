@@ -1,17 +1,14 @@
 package app;
-
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-//import java.util.ArrayList;
 import java.util.Scanner;
-
 import facade.Atendimento;
+import repositorio.comanda.NenhumaComandaException;
 import repositorio.produto.CardapioVazioException;
+import repositorio.produto.CodigoInvalidoException;
 import repositorio.produto.SemIndustrializadoException;
 import repositorio.produto.SemPratosException;
-
 import servico.Comanda;
-
 import servico.produto.Industrializado;
 import servico.produto.Prato;
 import servico.produto.Produto;
@@ -71,13 +68,13 @@ public class App {
 			System.out.println("Pratos");
 			try {
 				List<Produto> pratoTemporario = facade.getSomentePratos();
-				System.out.println("*******************************");
+				System.out.println("********************************************");
 				System.out.println("Cod Nome                    Disponivel Preço");
 				System.out.println("=== ======================= ========== =======");
 				for(int i=0; i<pratoTemporario.size(); i++) {
 					System.out.printf("%s", pratoTemporario.get(i));
 				}
-				System.out.println("*******************************");
+				System.out.println("********************************************");
 			}catch(SemPratosException ex) {
 				System.err.println(ex.getMessage());
 			}
@@ -85,13 +82,13 @@ public class App {
 			System.out.println("Industrializados");
 			try {
 				List<Produto> indutrialTemporario = facade.getSomenteIndustrializados();
-				System.out.println("*******************************");
+				System.out.println("********************************************");
 				System.out.println("Cod Nome                    Disponivel Preço");
 				System.out.println("=== ======================= ========== =======");
 				for(int i=0; i<indutrialTemporario.size(); i++) {
 					System.out.printf("%s", indutrialTemporario.get(i));
 				}
-				System.out.println("*******************************");
+				System.out.println("********************************************");
 			}catch(SemIndustrializadoException ex) {
 				System.err.println(ex.getMessage());
 			}
@@ -142,30 +139,31 @@ public class App {
 	}
 
 	public static void listarComandas(){
-		
-
 		limpaTela();
-		
-		List<Comanda> comandas = facade.getAllComandas();
-		
-		//Cabeçalho da tabela
-		System.out.printf("Codigo\tMesa\tStatus\tValor\tInicio\tFim\t\n");
-		System.out.printf("======\t====\t======\t=====\t======\t===\t\n");
-		
-		//Impressao de todas as comandas
-		for(Comanda comanda : comandas) {
-			System.out.printf("%d\t%d\t",comanda.getCodigoDeComanda(), comanda.getMesa().getCodigoDeMesa());
+		try {
+			List<Comanda> comandas = facade.getAllComandas();
 			
-			if(comanda.isStatus()) {
-				System.out.printf("Aberto\t%.2f\t%s", comanda.getTotalAPagar(), 
-						comanda.getDataDeAbertura().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")).toString());
-			}else {
-				System.out.printf("Fechado\t%.2f\t%s", comanda.getTotalAPagar(), 
-						comanda.getDataDeAbertura().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")).toString(), 
-						comanda.getDataDeFechamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")).toString());
+			//Cabeçalho da tabela
+			System.out.printf("Codigo\tMesa\tStatus\tValor\tInicio\tFim\t\n");
+			System.out.printf("======\t====\t======\t=====\t======\t===\t\n");
+			
+			//Impressao de todas as comandas
+			for(Comanda comanda : comandas) {
+				System.out.printf("%d\t%d\t",comanda.getCodigoDeComanda(), comanda.getMesa().getCodigoDeMesa());
+				
+				if(comanda.isStatus()) {
+					System.out.printf("Aberto\t%.2f\t%s", comanda.getTotalAPagar(), 
+							comanda.getDataDeAbertura().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")).toString());
+				}else {
+					System.out.printf("Fechado\t%.2f\t%s", comanda.getTotalAPagar(), 
+							comanda.getDataDeAbertura().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")).toString(), 
+							comanda.getDataDeFechamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")).toString());
+				}
+				
+				System.out.println(); //Imprime uma nova linha ao fim de cada comanda
 			}
-						
-			System.out.println(); //Imprime uma nova linha ao fim de cada comanda
+		}catch (NenhumaComandaException ex) {
+			System.err.println(ex.getMessage());
 		}
 		
 		//Padrão após a lista
@@ -215,6 +213,9 @@ public class App {
 			case 3:
 				removerProduto();
 				break;
+			case 4:
+				alterarDisponibilidade();
+				break;
 			}
 		}while(opcao!=0);
 	}
@@ -261,6 +262,44 @@ public class App {
 
 	}
 	public static void removerProduto() {
+		limpaTela();
+		try {
+			List<Produto> cardapioTemporario = facade.getAllProdutos();
+			System.out.println("Digite o código do produto a ser removido");
+			int codigo = scanner.nextInt();
+			try {				
+				facade.removeProdutoCadastrado(codigo);
+				System.out.println("Produto removido com sucesso");
+			}catch(CodigoInvalidoException ex) {
+				System.err.println(ex.getMessage());
+			}
+		}catch (CardapioVazioException ex){
+			System.err.println(ex.getMessage());
+		}
+		
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+	}
+	public static void alterarDisponibilidade() {
+		limpaTela();
+		System.out.println("Digite o código do produto");
+		int codigo = scanner.nextInt();
+		Produto produtoASerAlterado; 
+		try {
+			produtoASerAlterado = facade.getProduto(codigo);
+			System.out.println(" ");
+			System.out.println("Quantidade atual: " + produtoASerAlterado.getQuantidadeDisponivel());
+			System.out.println("Digite a quantidade nova: ");
+			int quantidadeNova = scanner.nextInt();
+			produtoASerAlterado.setQuantidadeDisponivel(quantidadeNova);
+		} catch (CodigoInvalidoException e) {
+			limpaTela();
+			System.err.println(e.getMessage());
+		}
+		
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+		scanner.nextLine();
 		
 	}
 	

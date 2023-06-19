@@ -9,12 +9,15 @@ import repositorio.produto.*;
 
 public interface RepositorioDeProdutos{
 
+	public Produto getProduto(int codigo) throws CodigoInvalidoException;
+	
 	public List<Produto> getAllProdutos() throws CardapioVazioException;
 	
 	public List<Produto> getSomentePratos() throws SemPratosException;
 	
 	public List<Produto> getSomenteIndustrializados() throws SemIndustrializadoException;
 
+	public void removerProduto(int codigo) throws CodigoInvalidoException;
 	
 	public void addNewProduto(Prato pratoNovo);
 	

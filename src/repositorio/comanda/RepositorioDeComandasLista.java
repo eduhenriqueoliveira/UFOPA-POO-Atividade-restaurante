@@ -1,12 +1,16 @@
 package repositorio.comanda;
 import servico.Comanda;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class RepositorioDeComandasLista implements RepositorioDeComandas{
 	
 	private List<Comanda> listaDeComandas;
+	public RepositorioDeComandasLista() {
+		this.listaDeComandas = new ArrayList<Comanda>();
+	}
 	
 	@Override
 	public boolean addComanda(Comanda novaComanda) {
@@ -14,7 +18,9 @@ public class RepositorioDeComandasLista implements RepositorioDeComandas{
 	}
 
 	@Override
-	public List<Comanda> getListaDeComandas() {
+	public List<Comanda> getListaDeComandas() throws NenhumaComandaException{
+		if (listaDeComandas.size() ==0)
+			throw new NenhumaComandaException();
 		return listaDeComandas;
 	}
 

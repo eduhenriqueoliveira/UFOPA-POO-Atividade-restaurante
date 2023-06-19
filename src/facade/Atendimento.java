@@ -2,9 +2,11 @@ package facade;
 import java.util.ArrayList;
 import java.util.List;
 
+import repositorio.comanda.NenhumaComandaException;
 import repositorio.comanda.RepositorioDeComandas;
 import repositorio.comanda.RepositorioDeComandasLista;
 import repositorio.produto.CardapioVazioException;
+import repositorio.produto.CodigoInvalidoException;
 import repositorio.produto.RepositorioDeProdutos;
 import repositorio.produto.RepositorioDeProdutosLista;
 import repositorio.produto.SemIndustrializadoException;
@@ -40,11 +42,19 @@ public class Atendimento {
 		return true;
 	}
 
+	public Produto getProduto(int codigo) throws CodigoInvalidoException{
+		return cardapio.getProduto(codigo);
+	}
+	
 	public void cadastrarProduto(Prato novo){
 		cardapio.addNewProduto(novo);
 	}
 	public void cadastrarProduto(Industrializado novo){
 		cardapio.addNewProduto(novo);
+	}
+	
+	public void removeProdutoCadastrado(int codigoDoProduto) throws CodigoInvalidoException{
+		cardapio.removerProduto(codigoDoProduto);
 	}
 	
 	public List<Produto> getAllProdutos() throws CardapioVazioException{
@@ -62,7 +72,7 @@ public class Atendimento {
 		return mesas;
 	}
 
-	public List<Comanda> getAllComandas(){
+	public List<Comanda> getAllComandas() throws NenhumaComandaException{
 		return comandas.getListaDeComandas();
 		
 	}

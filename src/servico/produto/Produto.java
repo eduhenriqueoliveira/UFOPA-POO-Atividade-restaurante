@@ -16,7 +16,7 @@ public class Produto {
 	public String toString() {
 		String disponivel;
 		disponivel = (quantidadeDisponivel>0)? "Sim":"Não";
-		return String.format("%-4d%-24s%-10sR$ %.2f\n", this.codigoDeProduto, this.nome, disponivel, this.preco);
+		return String.format("%-4d%-24s%-11sR$ %.2f\n", this.codigoDeProduto, this.nome, disponivel, this.preco);
 	}
 
 	public int getCodigoDeProduto() {

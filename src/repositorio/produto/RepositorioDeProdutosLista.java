@@ -13,6 +13,16 @@ public class RepositorioDeProdutosLista implements RepositorioDeProdutos{
 		produtos = new ArrayList<Produto>();
 	}
 
+	@Override
+	public Produto getProduto(int codigo) throws CodigoInvalidoException{
+		int n = this.produtos.size();
+		for(int i=0; i<n; i++) {
+			if (this.produtos.get(i).getCodigoDeProduto() == codigo) {
+				return this.produtos.get(i);
+			}
+		}
+		throw new CodigoInvalidoException();
+	}
 	
 	@Override
 	public List<Produto> getAllProdutos() throws CardapioVazioException{
@@ -40,9 +50,9 @@ public class RepositorioDeProdutosLista implements RepositorioDeProdutos{
 	public List<Produto> getSomenteIndustrializados() throws SemIndustrializadoException{
 		List<Produto> listaDeRetorno = new ArrayList<Produto>();
 		
-		int tamanhoDoCardapio = produtos.size();
+		int tamanhoDoCardapio = this.produtos.size();
 		for(int i=0; i<tamanhoDoCardapio; i++) {
-			if(produtos.get(i) instanceof Industrializado) {
+			if(this.produtos.get(i) instanceof Industrializado) {
 				listaDeRetorno.add(produtos.get(i));
 			}
 		}
@@ -51,6 +61,18 @@ public class RepositorioDeProdutosLista implements RepositorioDeProdutos{
 		return listaDeRetorno;
 	}
 
+	@Override
+	public void removerProduto(int codigo) throws CodigoInvalidoException{
+		int n = this.produtos.size();
+		for(int i=0; i<n; i++) {
+			if (produtos.get(i).getCodigoDeProduto() == codigo) {
+				produtos.remove(i);
+				return;
+			}
+		}
+		
+		throw new CodigoInvalidoException();
+	}
 	
 	@Override
 	public void addNewProduto(Prato pratoNovo) {

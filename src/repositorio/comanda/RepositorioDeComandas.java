@@ -7,6 +7,6 @@ import servico.Comanda;
 public interface RepositorioDeComandas {
 	
 	public boolean addComanda(Comanda novaComanda);
-	public List<Comanda> getListaDeComandas();
+	public List<Comanda> getListaDeComandas() throws NenhumaComandaException;
 	public void setListaDeComandas(List<Comanda> listaDeComandas);
 }
