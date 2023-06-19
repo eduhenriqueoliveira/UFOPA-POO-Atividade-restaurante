@@ -223,7 +223,7 @@ public class App {
 		
 		limpaTela();
 		System.out.println("Cadastro de produto");
-		System.out.println("===================");
+		System.out.println("======== == =======");
 		
 		System.out.println("Digite o tipo de produto: ");
 		System.out.println("<1> Prato <2> Industrializado");
