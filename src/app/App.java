@@ -1,5 +1,6 @@
 package app;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import facade.Atendimento;
@@ -9,6 +10,9 @@ import repositorio.produto.CodigoInvalidoException;
 import repositorio.produto.SemIndustrializadoException;
 import repositorio.produto.SemPratosException;
 import servico.Comanda;
+import servico.Mesa;
+import servico.MesaIndisponivelException;
+import servico.MesaNaoCadastradaException;
 import servico.produto.Industrializado;
 import servico.produto.Prato;
 import servico.produto.Produto;
@@ -48,6 +52,9 @@ public class App {
 				break;
 			case 3:
 				menuProdutos();
+				break;
+			case 4:
+				menuMesas();
 				break;
 			}
 			
@@ -174,6 +181,35 @@ public class App {
 
 	}
 	public static void fazerComanda() {
+		System.out.println("Digite o código da mesa: ");
+		int codigo = scanner.nextInt();
+		Mesa mesa;
+		try {
+			mesa = facade.getMesa(codigo);
+			facade.checarDisponibilidadeDeMesa(mesa);
+			facade.getAllProdutos();
+			List<Produto> pedidosFeitos = new ArrayList<Produto>();
+			Produto produtoPedido;
+			int opcao = 1;
+			do {
+				try {
+					System.out.println("Digite o código do produto, digite 0 para sair: ");
+					opcao = scanner.nextInt();
+					produtoPedido = facade.getProduto(codigo);
+					pedidosFeitos.add(produtoPedido);
+				} catch(CodigoInvalidoException ex) {
+					System.err.println(ex.getMessage());
+					System.err.println("Tente novamente se desejado.");
+				}
+			}while (opcao != 0);
+			facade.abrirComanda(mesa, pedidosFeitos);
+		} catch(MesaNaoCadastradaException ex1) {
+			System.err.println(ex1.getMessage());
+		} catch(MesaIndisponivelException ex2) {
+			System.err.println(ex2.getMessage());
+		} catch(CardapioVazioException ex3) {
+			System.err.println(ex3.getMessage());
+		}
 		
 	}
 	public static void fecharComanda() {
@@ -219,6 +255,7 @@ public class App {
 			}
 		}while(opcao!=0);
 	}
+	
 	public static void cadastrarProduto() {
 		
 		limpaTela();
@@ -302,6 +339,42 @@ public class App {
 		scanner.nextLine();
 		
 	}
+	public static void menuMesas() {
+		int opcao = 0;
+		limpaTela();
+		do {
+			System.out.println("MENU MESAS");
+			System.out.println("==== =====");
+			System.out.println();
+			System.out.println("<1> Listar mesas");
+			System.out.println("<2> Remover mesas");
+			System.out.println("<3> Adicionar mesas");
+			System.out.println("<0> Sair");
+			System.out.println();
+			System.out.print("Escolha uma opção: ");
+			try {
+				opcao = Integer.valueOf(scanner.nextLine());
+			} catch (Exception e) {
+				opcao = 0;
+			}
+			
+			switch (opcao) {
+			case 0:
+				limpaTela();
+				break;
+			case 1:
+				//listarMesas();
+				break;
+			case 2:
+				//removerMesas();
+				break;
+			case 3:
+				//adicionarMesas();
+				break;
+			}
+		}while(opcao!=0);
+	}
+	
 	
 
 }

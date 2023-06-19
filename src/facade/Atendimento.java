@@ -15,6 +15,8 @@ import repositorio.produto.SemPratosException;
 import servico.Comanda;
 
 import servico.Mesa;
+import servico.MesaIndisponivelException;
+import servico.MesaNaoCadastradaException;
 import servico.produto.Industrializado;
 import servico.produto.Prato;
 import servico.produto.Produto;
@@ -30,7 +32,15 @@ public class Atendimento {
 		this.mesas = new ArrayList<Mesa>();
 	}
 	
-	public boolean abrirComanda(Mesa naMesa) {
+	public boolean abrirComanda(Mesa naMesa, List<Produto> pedidos) {
+		
+		int codigo;
+		try {
+			codigo = comandas.getListaDeComandas().size() + 1;
+		} catch (NenhumaComandaException e) {
+			codigo = 1;
+		}
+		comandas.addComanda(new Comanda(naMesa, codigo, pedidos));
 		return true;
 	}
 	
@@ -38,8 +48,21 @@ public class Atendimento {
 		return true;
 	}
 	
-	public boolean checarDisponibilidadeDeMesa(Mesa mesa) {
+	public boolean checarDisponibilidadeDeMesa(Mesa mesa) throws MesaIndisponivelException{
+		List<Comanda> listaComandas;
+		try {
+			listaComandas = comandas.getListaDeComandas();
+		} catch(NenhumaComandaException ex) {
+			return true;
+		}
+		for(int i=0; i<listaComandas.size(); i++) 
+			if(mesa.getCodigoDeMesa()==listaComandas.get(i).getMesa().getCodigoDeMesa() && listaComandas.get(i).isStatus())
+				throw new MesaIndisponivelException();
 		return true;
+	}
+	
+	public List<Mesa> getMesas() {
+		return mesas;
 	}
 
 	public Produto getProduto(int codigo) throws CodigoInvalidoException{
@@ -57,6 +80,14 @@ public class Atendimento {
 		cardapio.removerProduto(codigoDoProduto);
 	}
 	
+	public Mesa getMesa(int codigo) throws MesaNaoCadastradaException{
+		int tamanho = mesas.size();
+		for(int i=0; i<tamanho; i++)
+			if(mesas.get(i).getCodigoDeMesa()==codigo)
+				return mesas.get(i);
+		throw new MesaNaoCadastradaException();
+	}
+	
 	public List<Produto> getAllProdutos() throws CardapioVazioException{
 		return cardapio.getAllProdutos();		
 	}
@@ -67,14 +98,9 @@ public class Atendimento {
 	public List<Produto> getSomenteIndustrializados() throws SemIndustrializadoException{
 		return cardapio.getSomenteIndustrializados();		
 	}
-	
-	public List<Mesa> getMesas() {
-		return mesas;
-	}
 
 	public List<Comanda> getAllComandas() throws NenhumaComandaException{
 		return comandas.getListaDeComandas();
-		
 	}
 
 }
