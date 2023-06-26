@@ -1,4 +1,5 @@
 package app;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import repositorio.produto.SemPratosException;
 import servico.Comanda;
 import servico.Mesa;
 import servico.MesaIndisponivelException;
+import servico.MesaJaCadastradaException;
 import servico.MesaNaoCadastradaException;
 import servico.produto.Industrializado;
 import servico.produto.Prato;
@@ -31,6 +33,7 @@ public class App {
 			System.out.println("<1> Exibir cardápio");
 			System.out.println("<2> Abrir menu de comandas");
 			System.out.println("<3> Abrir menu de produtos");
+			System.out.println("<4> Abrir menu de mesas");
 			System.out.println("<0> Sair");
 			System.out.println();
 			System.out.print("Escolha uma opção: ");
@@ -117,8 +120,9 @@ public class App {
 			System.out.println("==== ========");
 			System.out.println();
 			System.out.println("<1> Listar Comandas");
-			System.out.println("<2> Fazer Comanda");
-			System.out.println("<3> Fechar Comanda");
+			System.out.println("<2> Dados de uma comanda");
+			System.out.println("<3> Fazer Comanda");
+			System.out.println("<4> Alterar Comanda");
 			System.out.println("<0> Sair");
 			System.out.println();
 			System.out.print("Escolha uma opção: ");
@@ -136,10 +140,13 @@ public class App {
 				listarComandas();
 				break;
 			case 2:
-				fazerComanda();
+				exibirComanda();
 				break;
 			case 3:
-				fecharComanda();
+				fazerComanda();
+				break;
+			case 4:
+				alterarComanda();
 				break;
 			}
 		}while(opcao!=0);
@@ -178,9 +185,60 @@ public class App {
 		System.out.println("tecle <enter> para voltar");
 		scanner.nextLine();
 		limpaTela();
-		
-
 	}
+	
+	public static void exibirComanda() {
+		limpaTela();
+		System.out.println("Digite o código da comanda desejado:");
+		int cod = scanner.nextInt();
+		try {
+			Comanda comanda = facade.getComanda(cod);
+			
+			Mesa mesa = comanda.getMesa();
+			List<Produto> pedidos = comanda.getPedidos();
+			String status = (comanda.isStatus())? "Aberta":"Fechada";
+			double valorAPagar = comanda.getTotalAPagar();
+
+			LocalDateTime abertura = comanda.getDataDeAbertura();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+			
+			String dataDeAbertura = abertura.format(formatter);
+			
+		
+			
+			System.out.println("********************");
+			System.out.printf("Código de mesa atribuido: %d\n", mesa.getCodigoDeMesa());
+			System.out.println("______________");
+			System.out.printf("Status da comanda: %s\n", status);
+			for(Produto pedido:pedidos) {
+				System.out.println(pedido);
+			}
+			System.out.println("______________");
+			System.out.printf("Total a pagar: %f\n",valorAPagar);
+			if(!comanda.isStatus()) {
+				System.out.printf("Valor pago: %f\n", comanda.getValorPago());
+			}
+			System.out.println("______________");
+			System.out.println("Data de abertura: "+dataDeAbertura);
+			
+			if(!comanda.isStatus()) {
+				LocalDateTime fechamento = comanda.getDataDeFechamento();
+				String dataDeFechamento = fechamento.format(formatter);
+				System.out.println("Data de fechamento: "+dataDeFechamento);
+			}
+			
+			System.out.println("********************");
+			
+			
+		} catch (CodigoInvalidoException e) {
+			System.err.println(e.getMessage());
+		}
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+		scanner.nextLine();
+		limpaTela();
+	}
+	
 	public static void fazerComanda() {
 		limpaTela();
 		System.out.println("Digite o código da mesa: ");
@@ -199,7 +257,7 @@ public class App {
 				opcao = scanner.nextInt();
 				if(opcao != 0) {
 					try {
-						produtoPedido = facade.getProduto(codigo);
+						produtoPedido = facade.getProduto(opcao);
 						quantidadeDoPedido = produtoPedido.getQuantidadeDisponivel();
 						if(quantidadeDoPedido>0) {
 							pedidosFeitos.add(produtoPedido);
@@ -227,20 +285,83 @@ public class App {
 		scanner.nextLine();
 		limpaTela();
 	}
-	public static void fecharComanda() {
-		limpaTela();
-		System.out.println("Digite o código da comanda: ");
-		int codigo = scanner.nextInt();
-		Comanda comandaParaFechar; 
+	
+	public static void alterarComanda() {
+		System.out.println("Digite o código da comanda");
+		int cod = scanner.nextInt();
+		scanner.nextLine();
 		try {
-			comandaParaFechar = facade.getComanda(codigo);
-			System.out.println("Valor a pagar: " + comandaParaFechar.getTotalAPagar());
-			System.out.println("Valor que está pagando: ");
-			double valorPago = scanner.nextDouble();
-			facade.fecharComanda(comandaParaFechar, valorPago);
-		} catch (CodigoInvalidoException e) {
-			System.err.println(e.getMessage());
+			Comanda comanda = facade.getComanda(cod);
+			int opcao = 0;
+			limpaTela();
+			do {
+				System.out.println("ALTERAÇÃO DE COMANDA");
+				System.out.println("========= == =======");
+				System.out.println();
+				System.out.println("<1> adicionar produtos");
+				System.out.println("<2> Fechar comanda");
+				System.out.println("<0> Sair");
+				System.out.println();
+				System.out.print("Escolha uma opção: ");
+				try {
+					opcao = Integer.valueOf(scanner.nextLine());
+				} catch (Exception e) {
+					opcao = 0;
+				}
+				
+				switch (opcao) {
+				case 0:
+					limpaTela();
+					break;
+				case 1:
+					adicionarPedidos(comanda);
+					break;
+				case 2:
+					fecharComanda(comanda);
+					break;
+				}
+			}while(opcao!=0);
+		} catch (CodigoInvalidoException e1) {
+			System.err.println(e1.getMessage());
 		}
+	}
+	
+	public static void adicionarPedidos(Comanda comanda) {
+		List<Produto> novosPedidos = new ArrayList<Produto>();
+		Produto produtoPedido;
+		int opcao, quantidadeDoPedido;
+		do {
+			System.out.println("Digite o código do produto, digite 0 para sair: ");
+			opcao = scanner.nextInt();
+			if(opcao != 0) {
+				try {
+					produtoPedido = facade.getProduto(opcao);
+					quantidadeDoPedido = produtoPedido.getQuantidadeDisponivel();
+					if(quantidadeDoPedido>0) {
+						novosPedidos.add(produtoPedido);
+						produtoPedido.setQuantidadeDisponivel(quantidadeDoPedido-1);
+						System.out.println("Produto adicionado.");
+					} else {
+						System.err.println("Produto indisponivel");
+					}
+				} catch(CodigoInvalidoException ex) {
+					System.err.println(ex.getMessage());
+					System.err.println("Tente novamente se desejado.");
+				}
+			}
+		}while (opcao != 0);
+		facade.adicionarPedidos(comanda, novosPedidos);
+	}
+	
+	public static void fecharComanda(Comanda comandaParaFechar) {
+		limpaTela();
+
+
+		System.out.println("Valor a pagar: " + comandaParaFechar.getTotalAPagar());
+		System.out.println("Valor que está pagando: ");
+		double valorPago = scanner.nextDouble();
+		facade.fecharComanda(comandaParaFechar, valorPago);
+
 		System.out.println("tecle <enter> para voltar");
 		scanner.nextLine();
 		scanner.nextLine();
@@ -397,18 +518,52 @@ public class App {
 				limpaTela();
 				break;
 			case 1:
-				//listarMesas();
+				listarMesas();
 				break;
 			case 2:
-				//removerMesas();
+				removerMesas();
 				break;
 			case 3:
-				//adicionarMesas();
+				adicionarMesas();
 				break;
 			}
 		}while(opcao!=0);
 	}
+	public static void listarMesas() {
+		limpaTela();
+		List<Mesa> mesas = facade.getMesas();
+		System.out.println("Mesas cadastradas: ");
+		for(Mesa mesa : mesas) {
+			System.out.println("***********");
+			System.out.printf("Mesa de código: %d\n", mesa.getCodigoDeMesa());
+			System.out.println("***********");
+		}
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+	}
 	
-	
+	public static void removerMesas() {
+		limpaTela();
+		int cod;
+		System.out.println("Digite o código da mesa a ser removida: ");
+		cod = scanner.nextInt();
+		facade.removeMesa(cod);
+		
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+	}
 
+	public static void adicionarMesas() {
+		limpaTela();
+		System.out.println("Qual o código da mesa a ser adicionada?");
+		int cod = scanner.nextInt();
+		try {
+			facade.addMesa(cod);
+		} catch (MesaJaCadastradaException e) {
+			System.err.println(e.getMessage());
+		}
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+	}
+	
 }

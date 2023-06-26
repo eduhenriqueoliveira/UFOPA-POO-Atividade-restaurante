@@ -39,6 +39,11 @@ public class Comanda {
 		return retorno;
 	}
 	
+	public void adicionarPedidos(List<Produto> pedidos, double valorNovo) {
+		this.totalAPgar += valorNovo;
+		this.pedidos.addAll(pedidos);
+	}
+	
 	public void addPedidoNaComanda(Produto produto) {
 		this.pedidos.add(produto);
 		this.totalAPgar += produto.getPreco();
@@ -119,4 +124,7 @@ public class Comanda {
 		this.dataDeFechamento = dataDeFechamento;
 	}
 	
+	public double getValorPago() {
+		return this.valorPago;
+	}
 }

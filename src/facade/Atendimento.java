@@ -16,6 +16,7 @@ import servico.Comanda;
 
 import servico.Mesa;
 import servico.MesaIndisponivelException;
+import servico.MesaJaCadastradaException;
 import servico.MesaNaoCadastradaException;
 import servico.produto.Industrializado;
 import servico.produto.Prato;
@@ -113,5 +114,28 @@ public class Atendimento {
 	public List<Comanda> getAllComandas() throws NenhumaComandaException{
 		return comandas.getListaDeComandas();
 	}
+	public void adicionarPedidos(Comanda comanda, List<Produto> novosPedidos) {
+		double valorNovo = 0;
+		for(Produto pedido:novosPedidos)
+			valorNovo+=pedido.getPreco();
+		comanda.adicionarPedidos(novosPedidos, valorNovo);
+	}
+	public void removeMesa(int codigo) {
+		int idx = 0;
+		for (Mesa mesa:mesas) {
+			if(mesa.getCodigoDeMesa()==codigo) {
+				mesas.remove(idx);
+				return;
+			}
+			idx++;
+		}
 
+	}
+	public void addMesa(int codigo) throws MesaJaCadastradaException{
+		for(Mesa mesa:mesas) {
+			if(mesa.getCodigoDeMesa()==codigo)
+				throw new MesaJaCadastradaException();
+		}
+		mesas.add(new Mesa(codigo));
+	}
 }
