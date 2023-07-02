@@ -22,8 +22,9 @@ import servico.produto.Produto;
 public class App {
 	static Atendimento facade = new Atendimento();
 	static Scanner scanner = new Scanner(System.in);
-
+	
 	public static void main(String[] args) {
+		dadosTeste();
 		int opcao = 0;
 		do {
 			limpaTela();
@@ -187,54 +188,58 @@ public class App {
 		limpaTela();
 	}
 	
-	public static void exibirComanda() {
+	public static void exibirComanda() { 
 		limpaTela();
 		System.out.println("Digite o código da comanda desejado:");
-		int cod = scanner.nextInt();
+		int cod;
 		try {
-			Comanda comanda = facade.getComanda(cod);
-			
-			Mesa mesa = comanda.getMesa();
-			List<Produto> pedidos = comanda.getPedidos();
-			String status = (comanda.isStatus())? "Aberta":"Fechada";
-			double valorAPagar = comanda.getTotalAPagar();
-
-			LocalDateTime abertura = comanda.getDataDeAbertura();
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-			
-			String dataDeAbertura = abertura.format(formatter);
-			
-		
-			
-			System.out.println("********************");
-			System.out.printf("Código de mesa atribuido: %d\n", mesa.getCodigoDeMesa());
-			System.out.println("______________");
-			System.out.printf("Status da comanda: %s\n", status);
-			for(Produto pedido:pedidos) {
-				System.out.println(pedido);
-			}
-			System.out.println("______________");
-			System.out.printf("Total a pagar: %f\n",valorAPagar);
-			if(!comanda.isStatus()) {
-				System.out.printf("Valor pago: %f\n", comanda.getValorPago());
-			}
-			System.out.println("______________");
-			System.out.println("Data de abertura: "+dataDeAbertura);
-			
-			if(!comanda.isStatus()) {
-				LocalDateTime fechamento = comanda.getDataDeFechamento();
-				String dataDeFechamento = fechamento.format(formatter);
-				System.out.println("Data de fechamento: "+dataDeFechamento);
-			}
-			
-			System.out.println("********************");
-			
-			
-		} catch (CodigoInvalidoException e) {
-			System.err.println(e.getMessage());
+			cod = Integer.valueOf(scanner.nextLine());
+				try {
+					Comanda comanda = facade.getComanda(cod);
+					
+					Mesa mesa = comanda.getMesa();
+					List<Produto> pedidos = comanda.getPedidos();
+					String status = (comanda.isStatus())? "Aberta":"Fechada";
+					double valorAPagar = comanda.getTotalAPagar();
+					
+					LocalDateTime abertura = comanda.getDataDeAbertura();
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+					
+					String dataDeAbertura = abertura.format(formatter);
+					
+					
+					
+					System.out.println("********************");
+					System.out.printf("Código de mesa atribuido: %d\n", mesa.getCodigoDeMesa());
+					System.out.println("______________");
+					System.out.printf("Status da comanda: %s\n", status);
+					for(Produto pedido:pedidos) {
+						System.out.println(pedido);
+					}
+					System.out.println("______________");
+					System.out.printf("Total a pagar: %f\n",valorAPagar);
+					if(!comanda.isStatus()) {
+						System.out.printf("Valor pago: %f\n", comanda.getValorPago());
+					}
+					System.out.println("______________");
+					System.out.println("Data de abertura: "+dataDeAbertura);
+					
+					if(!comanda.isStatus()) {
+						LocalDateTime fechamento = comanda.getDataDeFechamento();
+						String dataDeFechamento = fechamento.format(formatter);
+						System.out.println("Data de fechamento: "+dataDeFechamento);
+					}
+					
+					System.out.println("********************");
+					
+					
+				} catch (CodigoInvalidoException e) {
+					System.err.println(e.getMessage());
+				}
+		} catch (Exception e) {
+			System.err.println("Código invalido.");
 		}
 		System.out.println("tecle <enter> para voltar");
-		scanner.nextLine();
 		scanner.nextLine();
 		limpaTela();
 	}
@@ -242,88 +247,102 @@ public class App {
 	public static void fazerComanda() {
 		limpaTela();
 		System.out.println("Digite o código da mesa: ");
-		int codigo = scanner.nextInt();
-		Mesa mesa;
+		int codigo;
 		try {
-			mesa = facade.getMesa(codigo);
-			facade.checarDisponibilidadeDeMesa(mesa);
-			facade.getAllProdutos();
-			List<Produto> pedidosFeitos = new ArrayList<Produto>();
-			Produto produtoPedido;
-			int opcao = 1;
-			int quantidadeDoPedido;
-			do {
-				System.out.println("Digite o código do produto, digite 0 para sair: ");
-				opcao = scanner.nextInt();
-				if(opcao != 0) {
-					try {
-						produtoPedido = facade.getProduto(opcao);
-						quantidadeDoPedido = produtoPedido.getQuantidadeDisponivel();
-						if(quantidadeDoPedido>0) {
-							pedidosFeitos.add(produtoPedido);
-							produtoPedido.setQuantidadeDisponivel(quantidadeDoPedido-1);
-							System.out.println("Produto adicionado.");
-						} else {
-							System.err.println("Produto indisponivel");
+			codigo = Integer.valueOf(scanner.nextLine());
+			Mesa mesa;
+			try {
+				mesa = facade.getMesa(codigo);
+				facade.checarDisponibilidadeDeMesa(mesa);
+				facade.getAllProdutos();
+				List<Produto> pedidosFeitos = new ArrayList<Produto>();
+				Produto produtoPedido;
+				int opcao = 1;
+				int quantidadeDoPedido;
+				do {
+					System.out.println("Digite o código do produto, digite 0 para sair: ");
+					opcao = scanner.nextInt();
+					if(opcao != 0) {
+						try {
+							produtoPedido = facade.getProduto(opcao);
+							quantidadeDoPedido = produtoPedido.getQuantidadeDisponivel();
+							if(quantidadeDoPedido>0) {
+								pedidosFeitos.add(produtoPedido);
+								produtoPedido.setQuantidadeDisponivel(quantidadeDoPedido-1);
+								System.out.println("Produto adicionado.");
+							} else {
+								System.err.println("Produto indisponivel");
+							}
+						} catch(CodigoInvalidoException ex) {
+							System.err.println(ex.getMessage());
+							System.err.println("Tente novamente se desejado.");
 						}
-					} catch(CodigoInvalidoException ex) {
-						System.err.println(ex.getMessage());
-						System.err.println("Tente novamente se desejado.");
 					}
+				}while (opcao != 0);
+				facade.abrirComanda(mesa, pedidosFeitos);
+				} catch(MesaNaoCadastradaException ex1) {
+					System.err.println(ex1.getMessage());
+				} catch(MesaIndisponivelException ex2) {
+					System.err.println(ex2.getMessage());
+				} catch(CardapioVazioException ex3) {
+					System.err.println(ex3.getMessage());
 				}
-			}while (opcao != 0);
-			facade.abrirComanda(mesa, pedidosFeitos);
-		} catch(MesaNaoCadastradaException ex1) {
-			System.err.println(ex1.getMessage());
-		} catch(MesaIndisponivelException ex2) {
-			System.err.println(ex2.getMessage());
-		} catch(CardapioVazioException ex3) {
-			System.err.println(ex3.getMessage());
-		}
+			} catch (Exception e) {
+				System.err.println("Código invalido");
+			}
 		System.out.println("tecle <enter> para voltar");
-		scanner.nextLine();
 		scanner.nextLine();
 		limpaTela();
 	}
 	
 	public static void alterarComanda() {
+		limpaTela();
 		System.out.println("Digite o código da comanda");
-		int cod = scanner.nextInt();
-		scanner.nextLine();
+		int cod;
 		try {
-			Comanda comanda = facade.getComanda(cod);
-			int opcao = 0;
-			limpaTela();
-			do {
-				System.out.println("ALTERAÇÃO DE COMANDA");
-				System.out.println("========= == =======");
-				System.out.println();
-				System.out.println("<1> adicionar produtos");
-				System.out.println("<2> Fechar comanda");
-				System.out.println("<0> Sair");
-				System.out.println();
-				System.out.print("Escolha uma opção: ");
-				try {
-					opcao = Integer.valueOf(scanner.nextLine());
-				} catch (Exception e) {
-					opcao = 0;
-				}
-				
-				switch (opcao) {
-				case 0:
-					limpaTela();
-					break;
-				case 1:
-					adicionarPedidos(comanda);
-					break;
-				case 2:
-					fecharComanda(comanda);
-					break;
-				}
-			}while(opcao!=0);
-		} catch (CodigoInvalidoException e1) {
-			System.err.println(e1.getMessage());
+			cod = Integer.valueOf(scanner.nextLine());
+			scanner.nextLine();
+			try {
+				Comanda comanda = facade.getComanda(cod);
+				int opcao = 0;
+				limpaTela();
+				do {
+					System.out.println("ALTERAÇÃO DE COMANDA");
+					System.out.println("========= == =======");
+					System.out.println();
+					System.out.println("<1> adicionar produtos");
+					System.out.println("<2> Fechar comanda");
+					System.out.println("<0> Sair");
+					System.out.println();
+					System.out.print("Escolha uma opção: ");
+					try {
+						opcao = Integer.valueOf(scanner.nextLine());
+					} catch (Exception e) {
+						opcao = 0;
+					}
+					
+					switch (opcao) {
+					case 0:
+						limpaTela();
+						break;
+				 	case 1:
+						adicionarPedidos(comanda);
+						break;
+					case 2:
+						fecharComanda(comanda);
+						break;
+					}
+				}while(opcao!=0);
+			} catch (CodigoInvalidoException e1) {
+				System.err.println(e1.getMessage());
+			}
+		} catch (Exception e) {
+			System.err.println("Código invalido");;
 		}
+
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+		limpaTela();
 	}
 	
 	public static void adicionarPedidos(Comanda comanda) {
@@ -416,33 +435,37 @@ public class App {
 		
 		System.out.println("Digite o tipo de produto: ");
 		System.out.println("<1> Prato <2> Industrializado");
-		int opcao = scanner.nextInt();
-		if(opcao>2 || 1>opcao) {
-			System.err.println("Tipo de produto invalido");
-		}else {
-			System.out.println("Nome do produto: ");
-			scanner.nextLine();
-			String nomeDoProduto = scanner.nextLine();
-			
-			System.out.println("Preço que ele custará");
-			double preco = scanner.nextDouble();
-			System.out.println("Quanto custa compra-lo ou faze-lo?");
-			
-			double custo = scanner.nextDouble();
-			int codigoDoProduto;
-			try {
-				codigoDoProduto = facade.getAllProdutos().size() + 1;
-			}catch(CardapioVazioException ex) {
-				codigoDoProduto = 1;
-			}
-			switch(opcao) {
+		int opcao;
+		try {
+			opcao = Integer.valueOf(scanner.nextLine());
+			if(opcao>2 || 1>opcao) {
+				System.err.println("Tipo de produto invalido");
+			}else {
+				System.out.println("Nome do produto: ");
+				String nomeDoProduto = scanner.nextLine();
+				
+				System.out.println("Preço que ele custará, use um ',' para centavos");
+				double preco = scanner.nextDouble();
+				System.out.println("Quanto custa compra-lo ou faze-lo?");
+				
+				double custo = Double.valueOf(scanner.nextDouble());
+				int codigoDoProduto;
+				try {
+					codigoDoProduto = facade.getAllProdutos().size() + 1;
+				}catch(CardapioVazioException ex) {
+					codigoDoProduto = 1;
+				}
+				switch(opcao) {
 				case 1:
 					facade.cadastrarProduto(new Prato(nomeDoProduto, preco, codigoDoProduto, custo));
 					break;
 				case 2: 
 					facade.cadastrarProduto(new Industrializado(nomeDoProduto, preco, codigoDoProduto, custo));
 					break;
+				}
 			}
+		} catch (Exception e) {
+			System.err.println("Invalido, tente novamente.");;
 		}
 		System.out.println();
 		System.out.println("tecle <enter> para voltar");
@@ -564,6 +587,44 @@ public class App {
 		}
 		System.out.println("tecle <enter> para voltar");
 		scanner.nextLine();
+	}
+	public static void dadosTeste() {
+		try {
+			//cadasatrando mesas
+			for (int i=0; i<10; i++) {				
+				facade.addMesa(i);			
+			}
+			
+			//cadastrando produtos
+			facade.cadastrarProduto(new Prato("Arroz com feijão", 22.00, 1, 7.50));
+			facade.cadastrarProduto(new Prato("Sanduiche", 17.00, 2, 5.50));
+			facade.cadastrarProduto(new Industrializado("Coca-cola", 6, 3, 3.50));
+			facade.cadastrarProduto(new Industrializado("Fanta-uva", 5.50, 4, 3.50));
+			
+			//alterando as disponibilidades dos produtos
+			for (int i=1; i<=4; i++) {
+				Produto produtoASerAlterado = facade.getProduto(i);
+				produtoASerAlterado.setQuantidadeDisponivel(10);				
+			}
+			
+			//cadastrando comandas
+			List<Produto> pedidosFeitos = new ArrayList<Produto>();
+			
+			pedidosFeitos.add(facade.getProduto(1)); //adicina produto
+			pedidosFeitos.add(facade.getProduto(3));
+			Mesa mesa = facade.getMesa(5);  //pega a mesa 
+			facade.abrirComanda(mesa, pedidosFeitos); // abre a comanda 
+			facade.fecharComanda(facade.getComanda(1), facade.getComanda(1).getTotalAPagar()); //fecha a comanda
+			pedidosFeitos.clear(); //limpa a lista
+			
+			pedidosFeitos.add(facade.getProduto(1));
+			pedidosFeitos.add(facade.getProduto(2)); //adicina produto
+			pedidosFeitos.add(facade.getProduto(4));
+			mesa = facade.getMesa(1);
+			facade.abrirComanda(mesa, pedidosFeitos);
+		} catch(Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 	
 }

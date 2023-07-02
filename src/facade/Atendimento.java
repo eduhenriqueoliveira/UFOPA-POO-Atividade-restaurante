@@ -31,17 +31,9 @@ public class Atendimento {
 		this.comandas = new RepositorioDeComandasLista();
 		this.cardapio = new RepositorioDeProdutosLista();
 		this.mesas = new ArrayList<Mesa>();
-		for(int i=1; i<=10; i++) {
-			mesas.add(new Mesa(i));
-		}
 	}
-	
+
 	public boolean abrirComanda(Mesa naMesa, List<Produto> pedidos) {
-		int qnt;
-		for(Produto pedido : pedidos) {
-			qnt = pedido.getQuantidadeDisponivel();
-			pedido.setQuantidadeDisponivel(qnt-1);
-		}
 		int codigo;
 		try {
 			codigo = comandas.getListaDeComandas().size() + 1;
@@ -120,6 +112,7 @@ public class Atendimento {
 			valorNovo+=pedido.getPreco();
 		comanda.adicionarPedidos(novosPedidos, valorNovo);
 	}
+	
 	public void removeMesa(int codigo) {
 		int idx = 0;
 		for (Mesa mesa:mesas) {
@@ -131,6 +124,7 @@ public class Atendimento {
 		}
 
 	}
+
 	public void addMesa(int codigo) throws MesaJaCadastradaException{
 		for(Mesa mesa:mesas) {
 			if(mesa.getCodigoDeMesa()==codigo)
