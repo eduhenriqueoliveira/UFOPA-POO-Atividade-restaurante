@@ -61,18 +61,6 @@ public class Atendimento {
 		return true;
 	}
 	
-	public List<Mesa> getMesas() {
-		return mesas;
-	}
-
-	public Produto getProduto(int codigo) throws CodigoInvalidoException{
-		return cardapio.getProduto(codigo);
-	}
-	
-	public Comanda getComanda(int codigo) throws CodigoInvalidoException{
-		return comandas.getComanda(codigo);
-	}
-	
 	public void cadastrarProduto(Prato novo){
 		cardapio.addNewProduto(novo);
 	}
@@ -84,33 +72,8 @@ public class Atendimento {
 		cardapio.removerProduto(codigoDoProduto);
 	}
 	
-	public Mesa getMesa(int codigo) throws MesaNaoCadastradaException{
-		int tamanho = mesas.size();
-		for(int i=0; i<tamanho; i++)
-			if(mesas.get(i).getCodigoDeMesa()==codigo)
-				return mesas.get(i);
-		throw new MesaNaoCadastradaException();
-	}
-	
-	public List<Produto> getAllProdutos() throws CardapioVazioException{
-		return cardapio.getAllProdutos();		
-	}
-
-	public List<Produto> getSomentePratos() throws SemPratosException{
-		return cardapio.getSomentePratos();
-	}
-	public List<Produto> getSomenteIndustrializados() throws SemIndustrializadoException{
-		return cardapio.getSomenteIndustrializados();		
-	}
-
-	public List<Comanda> getAllComandas() throws NenhumaComandaException{
-		return comandas.getListaDeComandas();
-	}
 	public void adicionarPedidos(Comanda comanda, List<Produto> novosPedidos) {
-		double valorNovo = 0;
-		for(Produto pedido:novosPedidos)
-			valorNovo+=pedido.getPreco();
-		comanda.adicionarPedidos(novosPedidos, valorNovo);
+		comanda.addPedidoNaComanda(novosPedidos);
 	}
 	
 	public void removeMesa(int codigo) {
@@ -131,5 +94,41 @@ public class Atendimento {
 				throw new MesaJaCadastradaException();
 		}
 		mesas.add(new Mesa(codigo));
+	}
+
+	public List<Mesa> getMesas() {
+		return mesas;
+	}
+
+	public Produto getProduto(int codigo) throws CodigoInvalidoException{
+		return cardapio.getProduto(codigo);
+	}
+
+	public Comanda getComanda(int codigo) throws CodigoInvalidoException{
+		return comandas.getComanda(codigo);
+	}
+
+	public Mesa getMesa(int codigo) throws MesaNaoCadastradaException{
+		int tamanho = mesas.size();
+		for(int i=0; i<tamanho; i++)
+			if(mesas.get(i).getCodigoDeMesa()==codigo)
+				return mesas.get(i);
+		throw new MesaNaoCadastradaException();
+	}
+
+	public List<Produto> getAllProdutos() throws CardapioVazioException{
+		return cardapio.getAllProdutos();		
+	}
+
+	public List<Produto> getSomentePratos() throws SemPratosException{
+		return cardapio.getSomentePratos();
+	}
+
+	public List<Produto> getSomenteIndustrializados() throws SemIndustrializadoException{
+		return cardapio.getSomenteIndustrializados();		
+	}
+
+	public List<Comanda> getAllComandas() throws NenhumaComandaException{
+		return comandas.getListaDeComandas();
 	}
 }

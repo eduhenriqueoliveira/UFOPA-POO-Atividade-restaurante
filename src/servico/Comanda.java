@@ -39,16 +39,6 @@ public class Comanda {
 		return retorno;
 	}
 	
-	public void adicionarPedidos(List<Produto> pedidos, double valorNovo) {
-		this.totalAPgar += valorNovo;
-		this.pedidos.addAll(pedidos);
-	}
-	
-	public void addPedidoNaComanda(Produto produto) {
-		this.pedidos.add(produto);
-		this.totalAPgar += produto.getPreco();
-	}
-	
 	
 	public void addPedidoNaComanda(List<Produto> produtos) {
 		int tamanho = produtos.size();
@@ -56,15 +46,6 @@ public class Comanda {
 			this.pedidos.add(produtos.get(i));
 		}
 		this.totalAPgar += somatorioDosProdutos(produtos);
-	}
-	
-	
-	public boolean addPedido(Produto pedido) {
-		return true;
-	}
-	
-	public double totalAPagar() {
-		return 0;
 	}
 
 	

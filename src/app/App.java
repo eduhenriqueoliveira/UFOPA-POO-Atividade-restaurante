@@ -60,6 +60,9 @@ public class App {
 			case 4:
 				menuMesas();
 				break;
+			case 5:
+				estatisticas();
+				break;
 			}
 			
 		} while(opcao!=0);
@@ -209,19 +212,28 @@ public class App {
 					
 					
 					
-					System.out.println("********************");
+					System.out.println("************************************************************");
 					System.out.printf("Código de mesa atribuido: %d\n", mesa.getCodigoDeMesa());
-					System.out.println("______________");
+					System.out.println("__________________________________________");
 					System.out.printf("Status da comanda: %s\n", status);
+					System.out.println("__________________________________________");
+					System.out.printf("Cod Nome                             Preço\n");
+					
+					String frase;
 					for(Produto pedido:pedidos) {
-						System.out.println(pedido);
+						frase = pedido.toString();
+						if(pedido.getQuantidadeDisponivel()>0)
+							frase = frase.replace("Sim", " ");
+						else 
+							frase = frase.replace("Não", " ");
+						System.out.println(frase);
 					}
-					System.out.println("______________");
+					System.out.println("__________________________________________");
 					System.out.printf("Total a pagar: %f\n",valorAPagar);
 					if(!comanda.isStatus()) {
 						System.out.printf("Valor pago: %f\n", comanda.getValorPago());
 					}
-					System.out.println("______________");
+					System.out.println("__________________________________________");
 					System.out.println("Data de abertura: "+dataDeAbertura);
 					
 					if(!comanda.isStatus()) {
@@ -230,7 +242,7 @@ public class App {
 						System.out.println("Data de fechamento: "+dataDeFechamento);
 					}
 					
-					System.out.println("********************");
+					System.out.println("************************************************************");
 					
 					
 				} catch (CodigoInvalidoException e) {
@@ -299,9 +311,9 @@ public class App {
 		limpaTela();
 		System.out.println("Digite o código da comanda");
 		int cod;
+		// ctrl f  não deixar comanda fechada ser alterada
 		try {
 			cod = Integer.valueOf(scanner.nextLine());
-			scanner.nextLine();
 			try {
 				Comanda comanda = facade.getComanda(cod);
 				int opcao = 0;
@@ -463,6 +475,7 @@ public class App {
 					facade.cadastrarProduto(new Industrializado(nomeDoProduto, preco, codigoDoProduto, custo));
 					break;
 				}
+				System.out.println("Produto cadastrado com sucesso!");
 			}
 		} catch (Exception e) {
 			System.err.println("Invalido, tente novamente.");;
@@ -474,12 +487,13 @@ public class App {
 		limpaTela();
 
 	}
+
 	public static void removerProduto() {
 		limpaTela();
-		try {
+		try {	
 			facade.getAllProdutos();
 			System.out.println("Digite o código do produto a ser removido");
-			int codigo = scanner.nextInt();
+			int codigo = Integer.valueOf(scanner.nextLine());
 			try {				
 				facade.removeProdutoCadastrado(codigo);
 				System.out.println("Produto removido com sucesso");
@@ -488,6 +502,8 @@ public class App {
 			}
 		}catch (CardapioVazioException ex){
 			System.err.println(ex.getMessage());
+		}catch (Exception ex) {
+			System.err.println("Digete apenas números.");
 		}
 		
 		System.out.println("tecle <enter> para voltar");
@@ -496,19 +512,23 @@ public class App {
 	}
 	public static void alterarDisponibilidade() {
 		limpaTela();
-		System.out.println("Digite o código do produto");
-		int codigo = scanner.nextInt();
-		Produto produtoASerAlterado; 
 		try {
-			produtoASerAlterado = facade.getProduto(codigo);
-			System.out.println(" ");
-			System.out.println("Quantidade atual: " + produtoASerAlterado.getQuantidadeDisponivel());
-			System.out.println("Digite a quantidade nova: ");
-			int quantidadeNova = scanner.nextInt();
-			produtoASerAlterado.setQuantidadeDisponivel(quantidadeNova);
-		} catch (CodigoInvalidoException e) {
-			limpaTela();
-			System.err.println(e.getMessage());
+			System.out.println("Digite o código do produto");
+			int codigo = Integer.valueOf(scanner.nextLine());
+			Produto produtoASerAlterado; 
+			try {
+				produtoASerAlterado = facade.getProduto(codigo);
+				System.out.println(" ");
+				System.out.println("Quantidade atual: " + produtoASerAlterado.getQuantidadeDisponivel());
+				System.out.println("Digite a quantidade nova: ");
+				int quantidadeNova = scanner.nextInt();
+				produtoASerAlterado.setQuantidadeDisponivel(quantidadeNova);
+			} catch (CodigoInvalidoException e) {
+				limpaTela();
+				System.err.println(e.getMessage());
+			}
+		}catch(Exception ex) {
+			System.err.println("Digite apenas números.");
 		}
 		
 		System.out.println("tecle <enter> para voltar");
@@ -569,25 +589,124 @@ public class App {
 		limpaTela();
 		int cod;
 		System.out.println("Digite o código da mesa a ser removida: ");
+		//Integer.valueOf(scanner.nextLine());
+		
+		try {
 		cod = scanner.nextInt();
 		facade.removeMesa(cod);
+		} catch (Exception e) {
+			System.err.println("Digite um código válido");
+		}
+		 
 		
 		System.out.println("tecle <enter> para voltar");
 		scanner.nextLine();
+		limpaTela();
 	}
 
 	public static void adicionarMesas() {
 		limpaTela();
 		System.out.println("Qual o código da mesa a ser adicionada?");
-		int cod = scanner.nextInt();
 		try {
-			facade.addMesa(cod);
-		} catch (MesaJaCadastradaException e) {
-			System.err.println(e.getMessage());
+			int cod = scanner.nextInt();
+			try {
+				facade.addMesa(cod);
+			} catch (MesaJaCadastradaException e) {
+				System.err.println(e.getMessage());
+			}
+		}catch(Exception e) {
+			System.err.println("Digite um código válido.");
 		}
+
 		System.out.println("tecle <enter> para voltar");
 		scanner.nextLine();
+		limpaTela();
 	}
+	
+	public static void estatisticas() {
+		
+		limpaTela();
+		
+		//Variáveis de receita
+		double receitaTotal = 0, despesaTotal = 0, pagamentoPendente = 0;
+		
+		//Estatísticas de Produtos
+		try {			
+			
+			System.out.printf("Total de produtos cadastrados: %d\n", facade.getAllProdutos().size());
+			
+			int totalQuantidades = 0;
+			
+			List<Produto> produtos = facade.getAllProdutos();
+			for(Produto produto : produtos) {
+				
+				//Conta quantidades de produtos
+				totalQuantidades += produto.getQuantidadeDisponivel();
+				
+				//Calcula despesa
+				if (produto instanceof Prato) {
+					despesaTotal += ((Prato) produto).getCustoDeProducao() * produto.getQuantidadeDisponivel();
+					
+				}else if(produto instanceof Industrializado) {
+					despesaTotal += ((Industrializado) produto).getCustoDeCompra() * produto.getQuantidadeDisponivel();
+				}
+				
+			}
+			
+			System.out.printf("Total de quantidades, base hoje: %d\n", totalQuantidades);
+			
+		}catch (CardapioVazioException ex) {
+			System.out.println("Total de produtos cadastrados: 0");
+			System.out.println("Total de quantidades, base hoje: 0");
+		}
+		
+		//Estatísticas de comandas
+		try {
+			
+			System.out.printf("Total de comandas feitas: %d\n", facade.getAllComandas().size());
+			
+			int totalAbertas = 0, totalFechadas = 0;
+			
+			for(Comanda comandaAtual : facade.getAllComandas()) {
+				
+				//Conta quantidade de comandas abertas e fechadas, além das receitas e valores a receber
+				if(comandaAtual.isStatus()) {
+					totalAbertas++;
+					pagamentoPendente += comandaAtual.getTotalAPagar();
+				}else {
+					totalFechadas++;
+					receitaTotal += comandaAtual.getValorPago();
+				}
+				
+				
+			}
+			
+			
+			//Imprime contagens
+			System.out.printf("Total de comandas fechadas: %d\n", totalFechadas);
+			System.out.printf("Total de comandas abertas: %d\n", totalAbertas);
+					
+			
+		}catch(NenhumaComandaException ex){
+			
+			System.out.println("Total de comandas feitas: 0");
+			System.out.println("Total de comandas fechadas: 0");
+			System.out.println("Total de comandas abertas: 0");
+			
+		}
+		
+		//Imprime valores
+		System.out.printf("Receita total: R$ %.2f\n", receitaTotal);
+		System.out.printf("Despesa total: R$ %.2f\n", despesaTotal);
+		System.out.printf("Pagamento pendente: R$ %.2f\n", pagamentoPendente);
+		
+		
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+		limpaTela();
+		
+	}
+	
 	public static void dadosTeste() {
 		try {
 			//cadasatrando mesas
