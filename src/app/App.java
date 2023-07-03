@@ -117,6 +117,7 @@ public class App {
 		limpaTela();
 		
 	}
+	
 	public static void menuComandas() {
 		int opcao = 0;
 		limpaTela();
@@ -312,40 +313,44 @@ public class App {
 		limpaTela();
 		System.out.println("Digite o código da comanda");
 		int cod;
-		// ctrl f  não deixar comanda fechada ser alterada
 		try {
 			cod = Integer.valueOf(scanner.nextLine());
 			try {
 				Comanda comanda = facade.getComanda(cod);
-				int opcao = 0;
-				limpaTela();
-				do {
-					System.out.println("ALTERAÇÃO DE COMANDA");
-					System.out.println("========= == =======");
-					System.out.println();
-					System.out.println("<1> adicionar produtos");
-					System.out.println("<2> Fechar comanda");
-					System.out.println("<0> Sair");
-					System.out.println();
-					System.out.print("Escolha uma opção: ");
-					try {
-						opcao = Integer.valueOf(scanner.nextLine());
-					} catch (Exception e) {
-						opcao = 0;
-					}
+				if (comanda.isStatus()) {
+					int opcao = 0;
+					limpaTela();
+					do {
+						System.out.println("ALTERAÇÃO DE COMANDA");
+						System.out.println("========= == =======");
+						System.out.println();
+						System.out.println("<1> adicionar produtos");
+						System.out.println("<2> Fechar comanda");
+						System.out.println("<0> Sair");
+						System.out.println();
+						System.out.print("Escolha uma opção: ");
+						try {
+							opcao = Integer.valueOf(scanner.nextLine());
+						} catch (Exception e) {
+							opcao = 0;
+						}
+						
+						switch (opcao) {
+						case 0:
+							limpaTela();
+							break;
+						case 1:
+							adicionarPedidos(comanda);
+							break;
+						case 2:
+							fecharComanda(comanda);
+							break;
+						}
+					}while(opcao!=0);
 					
-					switch (opcao) {
-					case 0:
-						limpaTela();
-						break;
-				 	case 1:
-						adicionarPedidos(comanda);
-						break;
-					case 2:
-						fecharComanda(comanda);
-						break;
-					}
-				}while(opcao!=0);
+				}else {
+					System.err.println("Comanda fechada, impossível de se alterar.");
+				}
 			} catch (CodigoInvalidoException e1) {
 				System.err.println(e1.getMessage());
 			}
@@ -538,6 +543,7 @@ public class App {
 		limpaTela();
 		
 	}
+	
 	public static void menuMesas() {
 		int opcao = 0;
 		limpaTela();
