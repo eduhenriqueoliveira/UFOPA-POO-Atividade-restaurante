@@ -35,6 +35,7 @@ public class App {
 			System.out.println("<2> Abrir menu de comandas");
 			System.out.println("<3> Abrir menu de produtos");
 			System.out.println("<4> Abrir menu de mesas");
+			System.out.println("<4> Exibir estatísticas");
 			System.out.println("<0> Sair");
 			System.out.println();
 			System.out.print("Escolha uma opção: ");
