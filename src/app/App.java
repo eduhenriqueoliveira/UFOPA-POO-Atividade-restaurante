@@ -15,6 +15,7 @@ import servico.Mesa;
 import servico.MesaIndisponivelException;
 import servico.MesaJaCadastradaException;
 import servico.MesaNaoCadastradaException;
+import servico.ProdutoNaoPedidoException;
 import servico.produto.Industrializado;
 import servico.produto.Prato;
 import servico.produto.Produto;
@@ -35,11 +36,11 @@ public class App {
 			System.out.println("<2> Abrir menu de comandas");
 			System.out.println("<3> Abrir menu de produtos");
 			System.out.println("<4> Abrir menu de mesas");
-			System.out.println("<4> Exibir estatísticas");
+			System.out.println("<5> Exibir estatísticas");
 			System.out.println("<0> Sair");
 			System.out.println();
 			System.out.print("Escolha uma opção: ");
-			try {
+			try { 
 				opcao = Integer.valueOf(scanner.nextLine());
 			} catch (Exception e) {
 				opcao = 0;
@@ -75,8 +76,7 @@ public class App {
 		}
 	}
 	
-	public static void exibeCardapio() {
-		limpaTela();
+	public static void exibirProdutos() {
 		try {			
 			facade.getAllProdutos();
 			
@@ -112,6 +112,11 @@ public class App {
 		}catch (CardapioVazioException ex) {
 			System.err.println(ex.getMessage());
 		}
+	}
+	
+	public static void exibeCardapio() {
+		limpaTela();
+		exibirProdutos();
 		System.out.println("tecle <enter> para voltar");
 		scanner.nextLine();
 		limpaTela();
@@ -193,6 +198,53 @@ public class App {
 		limpaTela();
 	}
 	
+	public static void exibeDadosDaComanda(Comanda comanda) {
+		Mesa mesa = comanda.getMesa();
+		List<Produto> pedidos = comanda.getPedidos();
+		String status = (comanda.isStatus())? "Aberta":"Fechada";
+		double valorAPagar = comanda.getTotalAPagar();
+		
+		LocalDateTime abertura = comanda.getDataDeAbertura();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+		
+		String dataDeAbertura = abertura.format(formatter);
+		
+		
+		
+		System.out.println("************************************************************");
+		System.out.printf("Código de mesa atribuido: %d\n", mesa.getCodigoDeMesa());
+		System.out.println("__________________________________________");
+		System.out.printf("Status da comanda: %s\n", status);
+		System.out.println("__________________________________________");
+		System.out.printf("Cod Nome                             Preço\n");
+		
+		String frase;
+		for(Produto pedido:pedidos) {
+			frase = pedido.toString();
+			if(pedido.getQuantidadeDisponivel()>0)
+				frase = frase.replace("Sim", " ");
+			else 
+				frase = frase.replace("Não", " ");
+			System.out.println(frase);
+		}
+		System.out.println("__________________________________________");
+		System.out.printf("Total a pagar: %f\n",valorAPagar);
+		if(!comanda.isStatus()) {
+			System.out.printf("Valor pago: %f\n", comanda.getValorPago());
+		}
+		System.out.println("__________________________________________");
+		System.out.println("Data de abertura: "+dataDeAbertura);
+		
+		if(!comanda.isStatus()) {
+			LocalDateTime fechamento = comanda.getDataDeFechamento();
+			String dataDeFechamento = fechamento.format(formatter);
+			System.out.println("Data de fechamento: "+dataDeFechamento);
+		}
+		
+		System.out.println("************************************************************");
+		
+	}
+	
 	public static void exibirComanda() { 
 		limpaTela();
 		System.out.println("Digite o código da comanda desejado:");
@@ -201,52 +253,7 @@ public class App {
 			cod = Integer.valueOf(scanner.nextLine());
 				try {
 					Comanda comanda = facade.getComanda(cod);
-					
-					Mesa mesa = comanda.getMesa();
-					List<Produto> pedidos = comanda.getPedidos();
-					String status = (comanda.isStatus())? "Aberta":"Fechada";
-					double valorAPagar = comanda.getTotalAPagar();
-					
-					LocalDateTime abertura = comanda.getDataDeAbertura();
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-					
-					String dataDeAbertura = abertura.format(formatter);
-					
-					
-					
-					System.out.println("************************************************************");
-					System.out.printf("Código de mesa atribuido: %d\n", mesa.getCodigoDeMesa());
-					System.out.println("__________________________________________");
-					System.out.printf("Status da comanda: %s\n", status);
-					System.out.println("__________________________________________");
-					System.out.printf("Cod Nome                             Preço\n");
-					
-					String frase;
-					for(Produto pedido:pedidos) {
-						frase = pedido.toString();
-						if(pedido.getQuantidadeDisponivel()>0)
-							frase = frase.replace("Sim", " ");
-						else 
-							frase = frase.replace("Não", " ");
-						System.out.println(frase);
-					}
-					System.out.println("__________________________________________");
-					System.out.printf("Total a pagar: %f\n",valorAPagar);
-					if(!comanda.isStatus()) {
-						System.out.printf("Valor pago: %f\n", comanda.getValorPago());
-					}
-					System.out.println("__________________________________________");
-					System.out.println("Data de abertura: "+dataDeAbertura);
-					
-					if(!comanda.isStatus()) {
-						LocalDateTime fechamento = comanda.getDataDeFechamento();
-						String dataDeFechamento = fechamento.format(formatter);
-						System.out.println("Data de fechamento: "+dataDeFechamento);
-					}
-					
-					System.out.println("************************************************************");
-					
-					
+					exibeDadosDaComanda(comanda);
 				} catch (CodigoInvalidoException e) {
 					System.err.println(e.getMessage());
 				}
@@ -274,6 +281,8 @@ public class App {
 				int opcao = 1;
 				int quantidadeDoPedido;
 				do {
+					limpaTela();
+					exibirProdutos();
 					System.out.println("Digite o código do produto, digite 0 para sair: ");
 					opcao = scanner.nextInt();
 					if(opcao != 0) {
@@ -323,9 +332,10 @@ public class App {
 					do {
 						System.out.println("ALTERAÇÃO DE COMANDA");
 						System.out.println("========= == =======");
-						System.out.println();
+						exibeDadosDaComanda(comanda);
 						System.out.println("<1> adicionar produtos");
-						System.out.println("<2> Fechar comanda");
+						System.out.println("<2> remover produtos");
+						System.out.println("<3> Fechar comanda");
 						System.out.println("<0> Sair");
 						System.out.println();
 						System.out.print("Escolha uma opção: ");
@@ -343,6 +353,9 @@ public class App {
 							adicionarPedidos(comanda);
 							break;
 						case 2:
+							removerPedido(comanda);
+							break;
+						case 3:
 							fecharComanda(comanda);
 							break;
 						}
@@ -368,6 +381,8 @@ public class App {
 		Produto produtoPedido;
 		int opcao, quantidadeDoPedido;
 		do {
+			limpaTela();
+			exibirProdutos();
 			System.out.println("Digite o código do produto, digite 0 para sair: ");
 			opcao = scanner.nextInt();
 			if(opcao != 0) {
@@ -388,6 +403,52 @@ public class App {
 			}
 		}while (opcao != 0);
 		facade.adicionarPedidos(comanda, novosPedidos);
+	}
+	
+	public static void removerPedido(Comanda comanda) {
+		limpaTela();
+		if (comanda.getPedidos().size()==0) {
+			System.err.println("Nenhum pedido na comanda");
+			return;
+		} 
+			
+		List<Produto> pedidos = comanda.getPedidos();
+		String frase;
+
+		int cod;
+		do {
+			
+			for(Produto pedido:pedidos) {
+				frase = pedido.toString();
+				if(pedido.getQuantidadeDisponivel()>0)
+					frase = frase.replace("Sim", " ");
+				else 
+					frase = frase.replace("Não", " ");
+				System.out.println(frase);
+			}
+			System.out.println("Digite o código do produto para ser removido, digite 0 para sair");
+			try {
+				cod = Integer.valueOf(scanner.nextLine());
+				if(cod != 0) {
+					try {
+						facade.removerPedido(cod, comanda);	
+						System.out.println("Produto removido");
+					}catch(CodigoInvalidoException e){
+						System.err.println(e.getMessage());
+					} catch(ProdutoNaoPedidoException e) {
+						System.err.println(e.getMessage());
+					}			
+				}
+			} catch (Exception e) {
+				cod = -1;
+				System.err.println("Código invalido,");
+			}
+		} while(cod !=0 && comanda.getPedidos().size()>0);
+		comanda.atualizarPreco();
+		System.out.println();
+		System.out.println("tecle <enter> para voltar");
+		scanner.nextLine();
+		limpaTela();
 	}
 	
 	public static void fecharComanda(Comanda comandaParaFechar) {

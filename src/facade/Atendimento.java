@@ -18,6 +18,7 @@ import servico.Mesa;
 import servico.MesaIndisponivelException;
 import servico.MesaJaCadastradaException;
 import servico.MesaNaoCadastradaException;
+import servico.ProdutoNaoPedidoException;
 import servico.produto.Industrializado;
 import servico.produto.Prato;
 import servico.produto.Produto;
@@ -75,6 +76,21 @@ public class Atendimento {
 	public void adicionarPedidos(Comanda comanda, List<Produto> novosPedidos) {
 		comanda.addPedidoNaComanda(novosPedidos);
 	}
+	
+	public void removerPedido(int codigoDoProduto, Comanda comanda) throws CodigoInvalidoException, ProdutoNaoPedidoException {
+		Produto paraRemover = cardapio.getProduto(codigoDoProduto);
+		int index = 0;
+		for(Produto pedido : comanda.getPedidos()) {
+			if(pedido.getCodigoDeProduto()==paraRemover.getCodigoDeProduto()) {
+				comanda.getPedidos().remove(index);
+				return;
+			}
+			index++;
+		}
+		throw new ProdutoNaoPedidoException();
+		
+	}
+	
 	
 	public void removeMesa(int codigo) {
 		int idx = 0;

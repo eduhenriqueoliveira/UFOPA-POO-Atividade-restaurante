@@ -48,7 +48,9 @@ public class Comanda {
 		this.totalAPgar += somatorioDosProdutos(produtos);
 	}
 
-	
+	public void atualizarPreco() {
+		this.totalAPgar = somatorioDosProdutos(this.pedidos);
+	}
 	public Mesa getMesa() {
 		return mesa;
 	}
