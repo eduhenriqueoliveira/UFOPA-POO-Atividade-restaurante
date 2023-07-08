@@ -417,7 +417,7 @@ public class App {
 
 		int cod;
 		do {
-			
+			limpaTela();
 			for(Produto pedido:pedidos) {
 				frase = pedido.toString();
 				if(pedido.getQuantidadeDisponivel()>0)
