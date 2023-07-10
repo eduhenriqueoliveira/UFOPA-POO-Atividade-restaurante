@@ -25,7 +25,7 @@ public class App {
 	static Scanner scanner = new Scanner(System.in);
 	
 	public static void main(String[] args) {
-		//dadosTeste();
+		dadosTeste();
 		int opcao = 0;
 		do {
 			limpaTela();
