@@ -25,7 +25,7 @@ public class App {
 	static Scanner scanner = new Scanner(System.in);
 	
 	public static void main(String[] args) {
-		dadosTeste();
+		//dadosTeste();
 		int opcao = 0;
 		do {
 			limpaTela();
@@ -280,26 +280,35 @@ public class App {
 				Produto produtoPedido;
 				int opcao = 1;
 				int quantidadeDoPedido;
+				limpaTela();
 				do {
-					limpaTela();
+
 					exibirProdutos();
 					System.out.println("Digite o código do produto, digite 0 para sair: ");
-					opcao = scanner.nextInt();
-					if(opcao != 0) {
-						try {
-							produtoPedido = facade.getProduto(opcao);
-							quantidadeDoPedido = produtoPedido.getQuantidadeDisponivel();
-							if(quantidadeDoPedido>0) {
-								pedidosFeitos.add(produtoPedido);
-								produtoPedido.setQuantidadeDisponivel(quantidadeDoPedido-1);
-								System.out.println("Produto adicionado.");
-							} else {
-								System.err.println("Produto indisponivel");
+					try {
+						opcao = Integer.valueOf(scanner.nextLine());
+						if(opcao != 0) {
+							try {
+								produtoPedido = facade.getProduto(opcao);
+								quantidadeDoPedido = produtoPedido.getQuantidadeDisponivel();
+								if(quantidadeDoPedido>0) {
+									pedidosFeitos.add(produtoPedido);
+									produtoPedido.setQuantidadeDisponivel(quantidadeDoPedido-1);
+									limpaTela();
+									System.out.println("Produto adicionado.");
+								} else {
+									limpaTela();
+									System.err.println("Produto indisponivel");
+								}
+							} catch(CodigoInvalidoException ex) {
+								limpaTela();
+								System.err.println(ex.getMessage());
+								System.err.println("Tente novamente se desejado.");
 							}
-						} catch(CodigoInvalidoException ex) {
-							System.err.println(ex.getMessage());
-							System.err.println("Tente novamente se desejado.");
-						}
+						}			
+					}catch(NumberFormatException  e) {
+						limpaTela();
+						System.err.println("Digite um valor númerico");
 					}
 				}while (opcao != 0);
 				facade.abrirComanda(mesa, pedidosFeitos);
@@ -365,7 +374,7 @@ public class App {
 					System.err.println("Comanda fechada, impossível de se alterar.");
 				}
 			} catch (CodigoInvalidoException e1) {
-				System.err.println(e1.getMessage());
+				System.err.println("Código invalido");
 			}
 		} catch (Exception e) {
 			System.err.println("Código invalido");;
@@ -651,6 +660,7 @@ public class App {
 		}
 		System.out.println("tecle <enter> para voltar");
 		scanner.nextLine();
+		limpaTela();
 	}
 	
 	public static void removerMesas() {
